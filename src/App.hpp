@@ -17,10 +17,24 @@ private:
 	sf::RenderTexture buffer;
 
 	sf::Clock clock;
-	float deltaTime;
 
+	std::vector<Player*> players;
 	std::vector<Entity*> entities;
+	std::vector<Item*> items;
+	std::vector<Projectile*> projectiles;
+	std::vector<sf::Text*> texts;
 
-	void drawEntities();
-	void updateEntities(sf::Event);
+	sf::Font font;
+	sf::Text scoreText;
+
+	sf::Sound scoreSound;
+
+	sf::View mainGameView;
+
+
+	int score;
+
+	void draw();
+	void update(sf::Event);
+	void updateEntities(sf::Event, float);
 };
