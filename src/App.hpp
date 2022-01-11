@@ -1,10 +1,11 @@
+#include "Platform/Platform.hpp"
 #include "Entity.hpp"
 #include "Map.hpp"
 #include "Item.hpp"
 #include "Player.hpp"
 #include "Projectile.hpp"
-#include "Platform/Platform.hpp"
-#include <vector>
+#include "Box.hpp"
+#include "MapLoader.hpp"
 
 class App
 {
@@ -36,6 +37,7 @@ private:
 
 	sf::View playerOneView;
 	sf::View playerTwoView;
+	sf::View miniMap;
 
 	Map map;
 
@@ -46,4 +48,6 @@ private:
 	void updateEntities(const sf::Event& event, float deltaTime);
 	void updateItems(const sf::Event& event, float deltaTime);
 	void updateProjectiles(const sf::Event& event, float deltaTime);
+
+	void newRound(int mapNumber);
 };

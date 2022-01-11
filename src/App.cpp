@@ -1,6 +1,5 @@
 #include "App.hpp"
 #include "Platform/Platform.hpp"
-#include <vector>
 
 App::App()
 {
@@ -21,11 +20,16 @@ void App::render()
 		buffer.draw(*text);
 
 	buffer.display();
-	// window.setView(window.getDefaultView());
 	window.setView(playerOneView);
 	window.draw(sf::Sprite(buffer.getTexture()));
 	window.setView(playerTwoView);
 	window.draw(sf::Sprite(buffer.getTexture()));
+	window.setView(miniMap);
+	window.draw(sf::Sprite(buffer.getTexture()));
+
+	// window.setView(window.getDefaultView());
+	// draw UI elements
+
 	window.display();
 }
 
@@ -43,11 +47,12 @@ void App::init(float windowWidth = 400.f,
 	playerTwoView.setSize(sf::Vector2f(240.f, 336.f));
 	playerTwoView.setCenter(sf::Vector2f(0.f, 0.f));
 	playerTwoView.setViewport(sf::FloatRect(.505f, .3f, 0.5f, .7f));
+	miniMap.setSize(sf::Vector2f(windowWidth, windowHeight));
+	miniMap.setCenter(sf::Vector2f(windowWidth / 2.f, windowHeight / 2.f));
+	miniMap.setViewport(sf::FloatRect(.36f, .016f, .28f, .28f));
 
-	int myMap[30][30] = {
-		0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2, 0, 2, 0, 0, 0, 0, 1, 0, 1, 0, 3, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 2, 0, 3, 0
-	};
-	map.loadMap(myMap);
+
+	map.setTargets(&items, &projectiles, &players);
 	scene = App::SCENE_BATTLE;
 }
 
@@ -59,8 +64,8 @@ void App::updateEntities(const sf::Event& event, float deltaTime)
 		entity->update(event, deltaTime);
 		if (!(entity->isAlive))
 		{
-			delete[] entity;
-			entities.erase(entities.begin() + i);
+			// delete[] entity;
+			// entities.erase(entities.begin() + i);
 		}
 	}
 }
@@ -101,6 +106,35 @@ void App::update(const sf::Event& event, float deltaTime)
 	// updateItems(event, deltaTime);
 	updateCameras();
 	updateEntities(event, deltaTime);
+	map.update(players, deltaTime);
+}
+
+void App::newRound(int mapNumber) {
+
+	int myMap[30][30];
+	std::string filePath = "map/map" + std::to_string(mapNumber) + ".txt";
+	MapLoader::loadMapFromFile(myMap, filePath);
+	map.loadMap(myMap);
+
+	sf::Vector2f playerOnePos;
+	sf::Vector2f playerTwoPos;
+
+	for (const auto& tile : map.getTiles()) {
+		if (tile->getType() == Tile::TYPE_SPAWNPOINT_ONE) {
+			playerOnePos = tile->getSprite().getPosition();
+		} else if (tile->getType() == Tile::TYPE_SPAWNPOINT_TWO) {
+			playerTwoPos = tile->getSprite().getPosition();
+		}
+	}
+
+	playerOnePos.x += Tile::TILE_SIZE / 2;
+	playerOnePos.y += Tile::TILE_SIZE / 2;
+	playerTwoPos.x += Tile::TILE_SIZE / 2;
+	playerTwoPos.y += Tile::TILE_SIZE / 2;
+
+	players[0]->reset(playerOnePos);
+	players[1]->reset(playerTwoPos);
+
 }
 
 void App::run()
@@ -108,13 +142,15 @@ void App::run()
 	sf::Texture tex;
 	std::vector<sf::Texture> player1Frames;
 	std::vector<sf::Texture> player2Frames;
-	tex.loadFromFile("content/Image/Tank/blue_tank.png");
+	tex.loadFromFile("content/Image/Tank/blue_tank_small.png");
 	player1Frames.push_back(tex);
-	tex.loadFromFile("content/Image/Tank/red_tank.png");
+	tex.loadFromFile("content/Image/Tank/red_tank_small.png");
 	player2Frames.push_back(tex);
 
-	Player* player1 = new Player(window.getSize().x, window.getSize().y, player1Frames, 1);
-	Player* player2 = new Player(window.getSize().x, window.getSize().y, player2Frames, 2);
+	sf::Vector2f border(window.getSize().x, window.getSize().y);
+
+	Player* player1 = new Player(border, player1Frames, 1);
+	Player* player2 = new Player(border, player2Frames, 2);
 	player1->sprite.scale(.1f, .1f);
 	player2->sprite.scale(.1f, .1f);
 
@@ -126,6 +162,7 @@ void App::run()
 	for (auto& player : players)
 		player->sprite.setOrigin(player->sprite.getTextureRect().width / 2, player->sprite.getTextureRect().height / 2);
 
+	newRound(6);
 	sf::Event event;
 	float deltaTime;
 	while (window.isOpen())

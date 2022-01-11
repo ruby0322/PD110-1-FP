@@ -17,7 +17,7 @@ Tile::Tile(int type, const sf::Vector2f& pos) :
 			break;
 		case Tile::TYPE_SPAWNPOINT_ONE:
 		case Tile::TYPE_SPAWNPOINT_TWO:
-			texture.loadFromFile("content/Image/Tile/spawnpoint.jpg");
+			texture.loadFromFile("content/Image/Tile/rrro_start.png");
 			break;
 		default:
 			break;
@@ -33,4 +33,14 @@ Tile::~Tile()
 void Tile::draw(sf::RenderTexture& bufferMap) const
 {
 	bufferMap.draw(sprite);
+}
+
+int Tile::getType() const
+{
+	return type;
+}
+
+sf::Sprite Tile::getSprite() const
+{
+	return sprite;
 }

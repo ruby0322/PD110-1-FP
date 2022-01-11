@@ -9,8 +9,10 @@ public:
 	static const float MAX_V;
 	static const int MAX_HP = 100;
 
-	Player(int borderx, int bordery, std::vector<sf::Texture> frames, int number);
+	Player(const sf::Vector2f& border, std::vector<sf::Texture> frames, int number);
 	~Player();
+
+	void reset(const sf::Vector2f& newPos);
 	void dealDamage(int damage);
 
 private:
@@ -22,8 +24,7 @@ private:
 	bool pressingS;
 	bool pressingD;
 
-	int borderx;
-	int bordery;
+	sf::Vector2f border;
 
 	bool rebouncingx;
 	bool rebouncingy;

@@ -1,14 +1,13 @@
 #include "Player.hpp"
 
-const float Player::MAX_V = .8f;
+const float Player::MAX_V = .5f;
 
-Player::Player(int borderx, int bordery, std::vector<sf::Texture> frames, int number) :
+Player::Player(const sf::Vector2f& border, std::vector<sf::Texture> frames, int number) :
 	Entity(frames),
 	hp(Player::MAX_HP)
 {
 	pressingW = pressingA = pressingS = pressingD = false;
-	this->borderx = borderx;
-	this->bordery = bordery;
+	this->border = border;
 	this->rebouncingx = false;
 	this->rebouncingy = false;
 	this->number = number;
@@ -131,13 +130,13 @@ void Player::checkBorder()
 
 	if (pos.x < 0)
 		sprite.setPosition(0, pos.y);
-	if (pos.x > borderx)
-		sprite.setPosition(borderx, pos.y);
+	if (pos.x > border.x)
+		sprite.setPosition(border.x, pos.y);
 	pos = sprite.getPosition();
 	if (pos.y < 0)
 		sprite.setPosition(pos.x, 0);
-	if (pos.y > bordery)
-		sprite.setPosition(pos.x, bordery);
+	if (pos.y > border.y)
+		sprite.setPosition(pos.x, border.y);
 }
 
 void Player::update(const sf::Event& event, float deltaTime)
@@ -156,4 +155,10 @@ void Player::update(const sf::Event& event, float deltaTime)
 void Player::dealDamage(int damage) {
 	hp -= damage;
 	if (hp <= 0) isAlive = false;
+	std::cout << "[Player" << number <<  "] " << "a damage of 5 was dealt, " << hp << " left." << std::endl;
+}
+
+void Player::reset(const sf::Vector2f& newPos) {
+	hp = Player::MAX_HP;
+	sprite.setPosition(newPos);
 }

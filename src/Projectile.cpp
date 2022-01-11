@@ -18,3 +18,8 @@ void Projectile::checkCollision(Entity& anotherEntity)
 		isAlive = false;
 	}
 }
+
+int Projectile::getDamage() const
+{
+	return damage;
+}

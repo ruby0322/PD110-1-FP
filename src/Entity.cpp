@@ -42,8 +42,6 @@ void Entity::update(const sf::Event& event, float deltaTime)
 		currTime -= Entity::UPDATE_TIME;
 }
 
-
-
 bool Entity::collidesWith(const Entity& anotherEntity)
 {
 	return this->sprite.getGlobalBounds().intersects(anotherEntity.sprite.getGlobalBounds());
