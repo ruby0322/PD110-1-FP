@@ -27,10 +27,4 @@ public:
 	virtual void update(const sf::Event& event, float deltaTime);
 };
 
-class Box
-{
-private:
-public:
-};
-
 #endif
