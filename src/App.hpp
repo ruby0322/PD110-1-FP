@@ -1,5 +1,8 @@
 #include "Entity.hpp"
 #include "Map.hpp"
+#include "Item.hpp"
+#include "Player.hpp"
+#include "Projectile.hpp"
 #include "Platform/Platform.hpp"
 #include <vector>
 

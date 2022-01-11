@@ -34,3 +34,9 @@ void Map::draw(sf::RenderTexture& buffer)
 std::vector<Tile*> Map::getTiles() const {
 	return tiles;
 }
+
+void Map::update(std::vector<Player*>& players) {
+	for (auto& lava : lavas) {
+		lava->update(players);
+	}
+}

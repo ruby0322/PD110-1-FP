@@ -5,7 +5,7 @@ int main()
 {
 	srand(time(nullptr));
 	App app;
-	app.init(960.f, 960.f, "Testing");
+	app.init(960.f, 960.f, "I\'M Tanker");
 
 	app.run();
 

@@ -37,10 +37,10 @@ void App::init(float windowWidth = 400.f,
 	platform.setIcon(window.getSystemHandle());
 	buffer.create(windowWidth, windowHeight);
 
-	playerOneView.setSize(sf::Vector2f(160.f, 224.f));
+	playerOneView.setSize(sf::Vector2f(240.f, 336.f));
 	playerOneView.setCenter(sf::Vector2f(0.f, 0.f));
 	playerOneView.setViewport(sf::FloatRect(-0.005f, .3f, 0.5f, .7f));
-	playerTwoView.setSize(sf::Vector2f(160.f, 224.f));
+	playerTwoView.setSize(sf::Vector2f(240.f, 336.f));
 	playerTwoView.setCenter(sf::Vector2f(0.f, 0.f));
 	playerTwoView.setViewport(sf::FloatRect(.505f, .3f, 0.5f, .7f));
 
@@ -48,7 +48,7 @@ void App::init(float windowWidth = 400.f,
 		0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2, 0, 2, 0, 0, 0, 0, 1, 0, 1, 0, 3, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 2, 0, 3, 0
 	};
 	map.loadMap(myMap);
-	scene = 0;
+	scene = App::SCENE_BATTLE;
 }
 
 void App::updateEntities(const sf::Event& event, float deltaTime)
