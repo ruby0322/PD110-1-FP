@@ -1,10 +1,16 @@
-#include "Platform/Platform.hpp"
 #include "Entity.hpp"
+#include "Map.hpp"
+#include "Platform/Platform.hpp"
 #include <vector>
 
 class App
 {
 public:
+	static const int SCENE_MAIN_MENU = 0;
+	static const int SCENE_BATTLE = 1;
+	static const int SCENE_PAUSE = 2;
+	static const int SCENE_WIN = 3;
+
 	void run();
 	void init(float, float, const char*);
 
@@ -12,6 +18,7 @@ public:
 	~App();
 
 private:
+	int scene;
 	util::Platform platform;
 	sf::RenderWindow window;
 	sf::RenderTexture buffer;
@@ -24,17 +31,16 @@ private:
 	std::vector<Projectile*> projectiles;
 	std::vector<sf::Text*> texts;
 
-	sf::Font font;
-	sf::Text scoreText;
+	sf::View playerOneView;
+	sf::View playerTwoView;
 
-	sf::Sound scoreSound;
+	Map map;
 
-	sf::View mainGameView;
-
-
-	int score;
-
-	void draw();
-	void update(sf::Event);
-	void updateEntities(sf::Event, float);
+	sf::Vector2f fixCameraCenter(const sf::Vector2f& pos);
+	void render();
+	void update(const sf::Event& event, float deltaTime);
+	void updateCameras();
+	void updateEntities(const sf::Event& event, float deltaTime);
+	void updateItems(const sf::Event& event, float deltaTime);
+	void updateProjectiles(const sf::Event& event, float deltaTime);
 };

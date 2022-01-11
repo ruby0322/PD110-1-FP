@@ -3,26 +3,18 @@
 #include <random>
 
 float Entity::UPDATE_TIME = .01f;
-float Entity::REBOUND_COEFFICIENT = .9f;
-float Entity::FRICTION_COEFFICIENT = .1f;
 float Player::UPDATE_TIME = .01f;
-float Player::REBOUND_COEFFICIENT = .3f;
-float Player::A = .03f;
-float Player::MAX_V = 3.8f;
-float Entity::MAX_V = 3.8f;
+float Player::MAX_V = .8f;
 float Item::UPDATE_TIME = .01f;
 
-Entity::Entity(std::vector<sf::Texture> frames, float mass) :
-	mass(mass),
+Entity::Entity(const std::vector<sf::Texture>& frames) :
 	isAlive(true)
 {
-	fax = fay = ax = ay = vx = vy = 0.f;
-	Fa = Fd = Fw = Fs = false;
 	currTime = 0;
 	currFrame = 0.f;
 	this->frames = std::vector<sf::Texture>(frames);
 	frameCnt = frames.size();
-	sprite.setTexture(frames[currFrame]);
+	sprite.setTexture(frames[0]);
 	sprite.scale(2.f, 2.f);
 }
 
@@ -30,55 +22,24 @@ Entity::~Entity()
 {
 }
 
+sf::Sprite Entity::getSprite() const {
+	return sprite;
+}
+
 void Entity::updateFrame()
 {
 	currFrame += .2f;
 	if (currFrame >= frameCnt)
-	{
 		currFrame = 0;
-	}
-	sprite.setTexture(frames[(int)(currFrame)]);
+	sprite.setTexture(frames[(int)currFrame]);
 }
 
 void Entity::updateMovement()
 {
-	vx += ax;
-	vy += ay;
-	if (vx > Entity::MAX_V)
-		vx = Entity::MAX_V;
-	if (vx < -Entity::MAX_V)
-		vx = -Entity::MAX_V;
-	if (vy > Entity::MAX_V)
-		vy = Entity::MAX_V;
-	if (vy < -Entity::MAX_V)
-		vy = -Entity::MAX_V;
-	// vx += fax;
-	// vy += fay;
 	sprite.move(vx, vy);
-	if (abs(vx) < .0005f)
-		vx = 0;
-	if (abs(vy) < .0005f)
-		vy = 0;
-	// if (vx > 0)
-	// {
-	// 	fax = -Entity::FRICTION_COEFFICIENT * mass;
-	// }
-	// else if (vx < 0)
-	// {
-	// 	fax = Entity::FRICTION_COEFFICIENT * mass;
-	// } else fax = 0;
-
-	// if (vy > 0)
-	// {
-	// 	fay = -Entity::FRICTION_COEFFICIENT * mass;
-	// }
-	// else if (vy < 0)
-	// {
-	// 	fay = Entity::FRICTION_COEFFICIENT * mass;
-	// } else fay = 0;
 }
 
-void Entity::update(sf::Event event, float deltaTime)
+void Entity::update(const sf::Event& event, float deltaTime)
 {
 	switch (event.type)
 	{
@@ -87,26 +48,26 @@ void Entity::update(sf::Event event, float deltaTime)
 	}
 	currTime += deltaTime;
 	if (currTime >= Entity::UPDATE_TIME)
-	{
 		currTime -= Entity::UPDATE_TIME;
-	}
 }
 
-Player::Player(int borderx, int bordery, std::vector<sf::Texture> frames, float mass, int number) :
-	Entity(frames, mass)
+Player::Player(int borderx, int bordery, std::vector<sf::Texture> frames, int number) :
+	Entity(frames)
 {
+	pressingW = pressingA = pressingS = pressingD = false;
 	this->borderx = borderx;
 	this->bordery = bordery;
 	this->rebouncingx = false;
 	this->rebouncingy = false;
 	this->number = number;
+	sprite.scale(.3f, .3f);
 }
 
 Player::~Player()
 {
 }
 
-void Player::control(sf::Event event)
+void Player::control(const sf::Event& event)
 {
 	if (number == 1)
 	{
@@ -116,16 +77,16 @@ void Player::control(sf::Event event)
 				switch (event.key.code)
 				{
 					case sf::Keyboard::A:
-						Fa = true;
+						pressingA = true;
 						break;
 					case sf::Keyboard::D:
-						Fd = true;
+						pressingD = true;
 						break;
 					case sf::Keyboard::W:
-						Fw = true;
+						pressingW = true;
 						break;
 					case sf::Keyboard::S:
-						Fs = true;
+						pressingS = true;
 						break;
 					default:
 						break;
@@ -135,18 +96,17 @@ void Player::control(sf::Event event)
 				switch (event.key.code)
 				{
 					case sf::Keyboard::A:
-						Fa = false;
+						pressingA = false;
 						break;
 					case sf::Keyboard::D:
-						Fd = false;
+						pressingD = false;
 						break;
 					case sf::Keyboard::W:
-						Fw = false;
+						pressingW = false;
 						break;
 					case sf::Keyboard::S:
-						Fs = false;
+						pressingS = false;
 						break;
-
 					default:
 						break;
 				}
@@ -163,16 +123,16 @@ void Player::control(sf::Event event)
 				switch (event.key.code)
 				{
 					case sf::Keyboard::Left:
-						Fa = true;
+						pressingA = true;
 						break;
 					case sf::Keyboard::Right:
-						Fd = true;
+						pressingD = true;
 						break;
 					case sf::Keyboard::Up:
-						Fw = true;
+						pressingW = true;
 						break;
 					case sf::Keyboard::Down:
-						Fs = true;
+						pressingS = true;
 						break;
 					default:
 						break;
@@ -182,16 +142,16 @@ void Player::control(sf::Event event)
 				switch (event.key.code)
 				{
 					case sf::Keyboard::Left:
-						Fa = false;
+						pressingA = false;
 						break;
 					case sf::Keyboard::Right:
-						Fd = false;
+						pressingD = false;
 						break;
 					case sf::Keyboard::Up:
-						Fw = false;
+						pressingW = false;
 						break;
 					case sf::Keyboard::Down:
-						Fs = false;
+						pressingS = false;
 						break;
 
 					default:
@@ -202,42 +162,17 @@ void Player::control(sf::Event event)
 				break;
 		}
 	}
-
-	ax = ay = 0;
-	if (Fa)
-		ax -= Player::A;
-	if (Fd)
-		ax += Player::A;
-	if (Fw)
-		ay -= Player::A;
-	if (Fs)
-		ay += Player::A;
+	vx = vy = 0;
+	if (pressingA) vx -= Player::MAX_V;
+	if (pressingD) vx += Player::MAX_V;
+	if (pressingW) vy -= Player::MAX_V;
+	if (pressingS) vy += Player::MAX_V;
 }
 
-void Player::checkRebound()
+void Player::checkBorder()
 {
 	auto pos = sprite.getPosition();
-	if ((pos.x > borderx || pos.x < 0) && !rebouncingx)
-	{
-		vx = -vx * Player::REBOUND_COEFFICIENT;
-		ax = -ax * Player::REBOUND_COEFFICIENT;
-		rebouncingx = true;
-	}
-	else if (0 < pos.x && pos.x < borderx)
-	{
-		rebouncingx = false;
-	}
 
-	if ((pos.y > bordery || pos.y < 0) && !rebouncingy)
-	{
-		vy = -vy * Player::REBOUND_COEFFICIENT;
-		ay = -ay * Player::REBOUND_COEFFICIENT;
-		rebouncingy = true;
-	}
-	else if (0 < pos.y && pos.y < bordery)
-	{
-		rebouncingy = false;
-	}
 	if (pos.x < 0)
 		sprite.setPosition(0, pos.y);
 	if (pos.x > borderx)
@@ -249,21 +184,21 @@ void Player::checkRebound()
 		sprite.setPosition(pos.x, bordery);
 }
 
-void Player::update(sf::Event event, float deltaTime)
+void Player::update(const sf::Event& event, float deltaTime)
 {
 	control(event);
-	currTime += deltaTime;
 	if (currTime >= Player::UPDATE_TIME)
 	{
 		updateMovement();
 		updateFrame();
 		currTime -= Player::UPDATE_TIME;
 	}
-	checkRebound();
+	checkBorder();
+	currTime += deltaTime;
 }
 
-Item::Item(int borderx, int bordery, std::vector<sf::Texture> frames, float mass) :
-	Entity(frames, mass),
+Item::Item(int borderx, int bordery, const std::vector<sf::Texture>& frames) :
+	Entity(frames),
 	borderx(borderx),
 	bordery(bordery)
 {
@@ -274,7 +209,7 @@ Item::~Item()
 {
 }
 
-void Item::update(sf::Event event, float deltaTime)
+void Item::update(const sf::Event& event, float deltaTime)
 {
 	currTime += deltaTime;
 	switch (event.type)
@@ -289,9 +224,9 @@ void Item::update(sf::Event event, float deltaTime)
 	}
 }
 
-bool Entity::collidesWith(Entity& entity)
+bool Entity::collidesWith(const Entity& anotherEntity)
 {
-	return this->sprite.getGlobalBounds().intersects(entity.sprite.getGlobalBounds());
+	return this->sprite.getGlobalBounds().intersects(anotherEntity.sprite.getGlobalBounds());
 }
 
 void Item::reset()
@@ -299,8 +234,8 @@ void Item::reset()
 	sprite.setPosition(rand() % borderx, rand() % bordery);
 }
 
-Projectile::Projectile(std::vector<sf::Texture> frames, float mass, int type) :
-	Entity(frames, mass),
+Projectile::Projectile(const std::vector<sf::Texture>& frames, int type) :
+	Entity(frames),
 	type(type)
 {
 	this->sprite.setPosition(sf::Vector2f(100, 100));
@@ -310,9 +245,9 @@ Projectile::~Projectile()
 {
 }
 
-void Projectile::checkCollision(Entity& entity)
+void Projectile::checkCollision(Entity& anotherEntity)
 {
-	if (this->collidesWith(entity))
+	if (this->collidesWith(anotherEntity))
 	{
 		isAlive = false;
 	}

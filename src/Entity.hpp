@@ -3,67 +3,56 @@
 
 class Entity
 {
-	static float MAX_V;
-	static float UPDATE_TIME;
-	static float REBOUND_COEFFICIENT;
-	static float FRICTION_COEFFICIENT;
-
 public:
-	float mass;
-
-	bool Fa;
-	bool Fd;
-	bool Fw;
-	bool Fs;
-
-	bool isAlive;
-
-	float vx;
-	float vy;
-
-	float ax;
-	float ay;
-
-	float fax;
-	float fay;
-
 	float currFrame;
 	int frameCnt;
 	float currTime;
-	sf::Sprite sprite;
 	std::vector<sf::Texture> frames;
 
-	Entity(std::vector<sf::Texture>, float);
+	sf::Sprite sprite;
+	bool isAlive;
+	float vx;
+	float vy;
+
+	static float UPDATE_TIME;
+
+	Entity(const std::vector<sf::Texture>& frames);
 	~Entity();
-	virtual void update(sf::Event, float);
+
+	bool collidesWith(const Entity& anotherEntity);
 	void updateFrame();
 	void updateMovement();
-	bool collidesWith(Entity&);
+	virtual void update(const sf::Event& event, float deltaTime);
+	sf::Sprite getSprite() const;
 };
 
 class Player : public Entity
 {
-	static float MAX_V;
-	static float A;
-	static float UPDATE_TIME;
-	static float REBOUND_COEFFICIENT;
 
 public:
-	Player(int, int, std::vector<sf::Texture>, float, int);
-	~Player();
+	static float MAX_V;
+	static float UPDATE_TIME;
 
-	void checkRebound();
-	void control(sf::Event);
-	void update(sf::Event, float) override;
+	Player(int borderx, int bordery, std::vector<sf::Texture> frames, int number);
+	~Player();
 
 private:
 	int number;
+
+	bool pressingW;
+	bool pressingA;
+	bool pressingS;
+	bool pressingD;
 
 	int borderx;
 	int bordery;
 
 	bool rebouncingx;
 	bool rebouncingy;
+
+	void checkBorder();
+	void control(const sf::Event& event);
+	void update(const sf::Event& event, float deltaTime) override;
 };
 
 class Item : public Entity
@@ -71,32 +60,23 @@ class Item : public Entity
 	static float UPDATE_TIME;
 
 public:
-	Item(int, int, std::vector<sf::Texture>, float);
+	Item(int borderx, int bordery, const std::vector<sf::Texture>& frames);
 	~Item();
 
 	void reset();
-	void update(sf::Event, float) override;
+	void update(const sf::Event& event, float deltaTime) override;
 
 	int borderx;
 	int bordery;
 };
 
-class Tile : public Entity
-{
-public:
-	void render() const;
-
-private:
-	int type;
-};
-
 class Projectile : public Entity
 {
 public:
-	Projectile(std::vector<sf::Texture> frames, float mass, int type);
+	Projectile(const std::vector<sf::Texture>& frames, int type);
 	~Projectile();
 
 private:
-	void checkCollision(Entity&);
+	void checkCollision(Entity& anotherEntity);
 	int type;
 };
