@@ -16,6 +16,8 @@ Tile::Tile(int type, const sf::Vector2f& pos) :
 		case Tile::TYPE_SPAWNPOINT_TWO:
 			texture.loadFromFile("content/Image/Tile/rrro_start.png");
 			break;
+		case Tile::TYPE_PLANK:
+			texture.loadFromFile("content/Image/Tile/plank.png");
 		default:
 			break;
 	}

@@ -47,7 +47,7 @@ void Item::update(float deltaTime)
 		if (player->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())) {
 			switch (type) {
 				case Item::TYPE_HEALTH_POTION:
-				player->heal(Item::HEALTH_POTION_HEAL);
+				player->status.heal();
 				break;
 				case Item::TYPE_SPEED_UPGRADE:
 				player->status.speedUpgrade();

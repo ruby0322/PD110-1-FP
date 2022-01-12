@@ -55,7 +55,10 @@ void Box::update()
 {
 	for (auto& projectile : *projectiles)
 		if (projectile->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
+		{
 			dealDamage(projectile->getDamage());
+			projectile->kill();
+		}
 	for (auto& player : *players)
-		collider.checkCollision(player->getCollider(), .8f);
+		collider.checkCollision(player->getCollider(), .7f);
 }

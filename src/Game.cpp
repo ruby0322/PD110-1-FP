@@ -11,17 +11,8 @@ Game::~Game()
 
 void Game::render()
 {
-	sf::Sprite sceneSprite = sceneManager.getSceneSprite();
-	window.setView(playerOneView);
-	window.draw(sceneSprite);
-	window.setView(playerTwoView);
-	window.draw(sceneSprite);
-	window.setView(miniMap);
-	window.draw(sceneSprite);
 
-	// window.setView(window.getDefaultView());
-	// draw UI elements
-
+	sceneManager.renderWindow(window);
 	window.display();
 }
 
@@ -38,27 +29,42 @@ void Game::init(float windowWidth = 400.f,
 	sf::Image icon;
 	icon.loadFromFile("content/Image/Tank/blue_tank_small.png");
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-	sceneManager.setBufferSize(windowWidth, windowHeight);
-
-	playerOneView.setSize(sf::Vector2f(240.f, 336.f));
-	playerOneView.setCenter(sf::Vector2f(0.f, 0.f));
-	playerOneView.setViewport(sf::FloatRect(-0.005f, .3f, 0.5f, .7f));
-	playerTwoView.setSize(sf::Vector2f(240.f, 336.f));
-	playerTwoView.setCenter(sf::Vector2f(0.f, 0.f));
-	playerTwoView.setViewport(sf::FloatRect(.505f, .3f, 0.5f, .7f));
-	miniMap.setSize(sf::Vector2f(windowWidth, windowHeight));
-	miniMap.setCenter(sf::Vector2f(windowWidth / 2.f, windowHeight / 2.f));
-	miniMap.setViewport(sf::FloatRect(.36f, .016f, .28f, .28f));
-
+	sceneManager.init(windowWidth, windowHeight);
 
 
 	sf::Vector2f border(window.getSize().x, window.getSize().y);
 
-	Player* player1 = new Player(border, 1);
-	Player* player2 = new Player(border, 2);
+	Player* player1 = new Player(border, 1, &sceneManager.projectiles);
+	Player* player2 = new Player(border, 2, &sceneManager.projectiles);
 
 	sceneManager.players.push_back(player1);
 	sceneManager.players.push_back(player2);
+
+	UIElement* playerOnePhoto = new UIElement(UIElement::TYPE_PLAYER_ONE_PHOTO, player1);
+	UIElement* playerTwoPhoto = new UIElement(UIElement::TYPE_PLAYER_TWO_PHOTO, player2);
+	UIElement* playerOneHealthBar = new UIElement(UIElement::TYPE_PLAYER_ONE_HEALTH_BAR, player1);
+	UIElement* playerTwoHealthBar = new UIElement(UIElement::TYPE_PLAYER_TWO_HEALTH_BAR, player2);
+	UIElement* playerOneHealthBarBg = new UIElement(UIElement::TYPE_PLAYER_ONE_HEALTH_BAR_BG, player1);
+	UIElement* playerTwoHealthBarBg = new UIElement(UIElement::TYPE_PLAYER_TWO_HEALTH_BAR_BG, player2);
+	UIElement* playerOneHealing = new UIElement(UIElement::TYPE_PLAYER_ONE_HEALING, player1);
+	UIElement* playerTwoHealing = new UIElement(UIElement::TYPE_PLAYER_TWO_HEALING, player2);
+	UIElement* playerOneSpeedBoosted = new UIElement(UIElement::TYPE_PLAYER_ONE_SPEED_BOOSTED, player1);
+	UIElement* playerTwoSpeedBoosted = new UIElement(UIElement::TYPE_PLAYER_TWO_SPEED_BOOSTED, player2);
+	UIElement* playerOneBulletBoosted = new UIElement(UIElement::TYPE_PLAYER_ONE_BULLET_BOOSTED, player1);
+	UIElement* playerTwoBulletBoosted = new UIElement(UIElement::TYPE_PLAYER_TWO_BULLET_BOOSTED, player2);
+
+	sceneManager.uiElements.push_back(playerOnePhoto);
+	sceneManager.uiElements.push_back(playerTwoPhoto);
+	sceneManager.uiElements.push_back(playerOneHealthBar);
+	sceneManager.uiElements.push_back(playerTwoHealthBar);
+	sceneManager.uiElements.push_back(playerOneHealthBarBg);
+	sceneManager.uiElements.push_back(playerTwoHealthBarBg);
+	sceneManager.uiElements.push_back(playerOneHealing);
+	sceneManager.uiElements.push_back(playerTwoHealing);
+	sceneManager.uiElements.push_back(playerOneSpeedBoosted);
+	sceneManager.uiElements.push_back(playerTwoSpeedBoosted);
+	sceneManager.uiElements.push_back(playerOneBulletBoosted);
+	sceneManager.uiElements.push_back(playerTwoBulletBoosted);
 
 	// Item* newItem = new Item(0, sf::Vector2f(100.f, 100.f), &sceneManager.players);
 	// sceneManager.items.push_back(newItem);
@@ -74,27 +80,7 @@ void Game::init(float windowWidth = 400.f,
 	sceneManager.newRound(1);
 }
 
-sf::Vector2f Game::fixCameraCenter(const sf::Vector2f& pos)
-{
-	sf::Vector2f fixedPos(pos);
 
-	if (pos.x < playerOneView.getSize().x / 2)
-		fixedPos.x = playerOneView.getSize().x / 2;
-	else if (pos.x > 960 - playerOneView.getSize().x / 2)
-		fixedPos.x = 960 - playerOneView.getSize().x / 2;
-	if (pos.y < playerOneView.getSize().y / 2)
-		fixedPos.y = playerOneView.getSize().y / 2;
-	else if (pos.y > 960 - playerOneView.getSize().y / 2)
-		fixedPos.y = 960 - playerOneView.getSize().y / 2;
-
-	return fixedPos;
-}
-
-void Game::updateCameras()
-{
-	playerOneView.setCenter(fixCameraCenter(sceneManager.players[0]->sprite.getPosition()));
-	playerTwoView.setCenter(fixCameraCenter(sceneManager.players[1]->sprite.getPosition()));
-}
 
 void Game::__debug(const sf::Event& event)
 {
@@ -160,7 +146,6 @@ void Game::run()
 			__debug(event);
 		}
 		sceneManager.update(deltaTime);
-		updateCameras();
 		render();
 	}
 }

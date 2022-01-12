@@ -19,7 +19,7 @@ public:
 	static const int TYPE_BULLET_UPGRADE = 2;
 
 	Item(int type, const sf::Vector2f& pos, std::vector<Player*>* players);
-	~Item();
+	~Item() override;
 
 	void handleEvent(const sf::Event& event) override;
 	void update(float deltaTime) override;

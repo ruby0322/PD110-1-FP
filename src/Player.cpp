@@ -6,10 +6,11 @@ const float Player::MAX_HP = 100.f;
 const float Player::DRIVING_SOUND_INTERVAL = 1.f;
 const float Player::OMEGA = 2.5f;
 
-Player::Player(const sf::Vector2f& border, int number) :
+Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>* projectiles) :
 	Entity(),
 	hp(Player::MAX_HP)
 {
+	this->projectiles = projectiles;
 	direction = 0.f;
 	drivingSoundTimer = 0.f;
 	this->border = border;
@@ -32,14 +33,17 @@ Player::~Player()
 
 void Player::shoot()
 {
-	if (number == 1) {
-		Projectile* bullet = new Projectile(Projectile::TYPE_BLUE_BULLET, sprite.getPosition(), direction);
+	if (number == 1)
+	{
+		Projectile* bullet = new Projectile(Projectile::TYPE_BLUE_BULLET, status.getDamage(Player::DEFAULT_DAMAGE), sprite.getPosition(), direction, status.isBulletBoosted());
 		projectiles->push_back(bullet);
 	}
-	else {
-		Projectile* bullet = new Projectile(Projectile::TYPE_RED_BULLET, sprite.getPosition(), direction);
+	else
+	{
+		Projectile* bullet = new Projectile(Projectile::TYPE_RED_BULLET, status.getDamage(Player::DEFAULT_DAMAGE), sprite.getPosition(), direction, status.isBulletBoosted());
 		projectiles->push_back(bullet);
 	}
+	SoundManager::PlaySoundEffect(SoundManager::TYPE_FIRE_SHOT);
 }
 
 bool Player::isDriving() const
@@ -87,6 +91,36 @@ void Player::checkBorder()
 		sprite.setPosition(pos.x, border.y);
 }
 
+void Player::checkProjectiles()
+{
+	for (auto& projectile : *projectiles)
+	{
+		// getCollider().checkCollision(projectile->getCollider(), .95f);
+		if (projectile->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
+		{
+
+			if (number == 1)
+			{
+				if (projectile->getType() == Projectile::TYPE_RED_BULLET)
+				{
+					dealDamage(projectile->getDamage());
+					projectile->kill();
+					SoundManager::PlaySoundEffect(SoundManager::TYPE_TANK_SHOT);
+				}
+			}
+			else
+			{
+				if (projectile->getType() == Projectile::TYPE_BLUE_BULLET)
+				{
+					dealDamage(projectile->getDamage());
+					projectile->kill();
+					SoundManager::PlaySoundEffect(SoundManager::TYPE_TANK_SHOT);
+				}
+			}
+		}
+	}
+}
+
 void Player::update(float deltaTime)
 {
 	sprite.setRotation(direction);
@@ -116,14 +150,17 @@ void Player::update(float deltaTime)
 	}
 	if (status.pressingV && !status.isReloading())
 	{
-		// shoot();
+		shoot();
 		status.reload();
 	}
 
+	checkProjectiles();
 	checkBorder();
 	status.update(deltaTime);
 	updateTimer += deltaTime;
 	drivingSoundTimer += deltaTime;
+	if (status.isHealing())
+		heal(.03f);
 }
 
 void Player::dealDamage(float damage)
@@ -138,6 +175,13 @@ void Player::dealDamage(float damage)
 void Player::heal(float amount)
 {
 	hp += amount;
+	if (hp > 100.f) hp = 100.f;
+	std::cout << "[Player" << number << "] Healed " << amount << " hp, currently " << hp << std::endl;
+}
+
+float Player::getHp() const
+{
+	return hp;
 }
 
 void Player::reset(const sf::Vector2f& newPos)

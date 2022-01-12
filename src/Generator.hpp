@@ -7,6 +7,7 @@
 class Generator
 {
 private:
+	// Preventing instantiation
 	Generator();
 	~Generator();
 

@@ -14,6 +14,21 @@ SceneManager::~SceneManager()
 		delete texts[i];
 }
 
+void SceneManager::init(float windowWidth, float windowHeight)
+{
+	playerOneView.setSize(sf::Vector2f(240.f, 336.f));
+	playerOneView.setCenter(sf::Vector2f(0.f, 0.f));
+	playerOneView.setViewport(sf::FloatRect(-0.005f, .3f, 0.5f, .7f));
+	playerTwoView.setSize(sf::Vector2f(240.f, 336.f));
+	playerTwoView.setCenter(sf::Vector2f(0.f, 0.f));
+	playerTwoView.setViewport(sf::FloatRect(.505f, .3f, 0.5f, .7f));
+	miniMap.setSize(sf::Vector2f(windowWidth, windowHeight));
+	miniMap.setCenter(sf::Vector2f(windowWidth / 2.f, windowHeight / 2.f));
+	miniMap.setViewport(sf::FloatRect(.36f, .016f, .28f, .28f));
+	sceneBuffer.create(windowWidth, windowHeight);
+
+}
+
 void SceneManager::clearDeadProjectiles()
 {
 	for (size_t i = 0; i < projectiles.size(); ++i)
@@ -38,9 +53,26 @@ void SceneManager::clearDeadItems()
 	}
 }
 
-void SceneManager::setBufferSize(int width, int height)
+sf::Vector2f SceneManager::fixCameraCenter(const sf::Vector2f& pos)
 {
-	sceneBuffer.create(width, height);
+	sf::Vector2f fixedPos(pos);
+
+	if (pos.x < playerOneView.getSize().x / 2)
+		fixedPos.x = playerOneView.getSize().x / 2;
+	else if (pos.x > 960 - playerOneView.getSize().x / 2)
+		fixedPos.x = 960 - playerOneView.getSize().x / 2;
+	if (pos.y < playerOneView.getSize().y / 2)
+		fixedPos.y = playerOneView.getSize().y / 2;
+	else if (pos.y > 960 - playerOneView.getSize().y / 2)
+		fixedPos.y = 960 - playerOneView.getSize().y / 2;
+
+	return fixedPos;
+}
+
+void SceneManager::updateCameras()
+{
+	playerOneView.setCenter(fixCameraCenter(players[0]->sprite.getPosition()));
+	playerTwoView.setCenter(fixCameraCenter(players[1]->sprite.getPosition()));
 }
 
 void SceneManager::setScene(int newScene)
@@ -64,6 +96,8 @@ void SceneManager::updateBattle(float deltaTime)
 		item->update(deltaTime);
 	for (auto& projectile : projectiles)
 		projectile->update(deltaTime);
+	for (auto& uiElement : uiElements)
+		uiElement->update();
 	players[0]->getCollider().checkCollision(players[1]->getCollider(), .5f);
 }
 
@@ -89,6 +123,7 @@ void SceneManager::update(float deltaTime)
 		default:
 			break;
 	}
+	updateCameras();
 }
 
 void SceneManager::handleEventBattle(const sf::Event& event)
@@ -171,6 +206,7 @@ void SceneManager::renderSceneBuffer()
 				sceneBuffer.draw(item->sprite);
 			for (const auto& projectile : projectiles)
 				sceneBuffer.draw(projectile->sprite);
+
 			break;
 		case SceneManager::SCENE_WIN:
 			break;
@@ -187,6 +223,25 @@ void SceneManager::renderSceneBuffer()
 			break;
 	}
 	sceneBuffer.display();
+}
+
+void SceneManager::renderWindow(sf::RenderWindow& window)
+{
+	window.setView(window.getDefaultView());
+	window.clear(sf::Color(31, 30, 28));
+	sf::Sprite sceneSprite = getSceneSprite();
+	window.setView(playerOneView);
+	window.draw(sceneSprite);
+	window.setView(playerTwoView);
+	window.draw(sceneSprite);
+	window.setView(miniMap);
+	window.draw(sceneSprite);
+
+	window.setView(window.getDefaultView());
+	if (currScene == SceneManager::SCENE_BATTLE)
+		for (const auto& uiElement : uiElements)
+			uiElement->draw(window);
+	// draw UI elements
 }
 
 sf::Sprite SceneManager::getSceneSprite()

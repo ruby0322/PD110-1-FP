@@ -46,8 +46,6 @@ void Lava::update(float deltaTime)
 	for (auto& box : *boxes)
 	{
 		if (box->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
-		{
 			box->dealDamage(Lava::DAMAGE * .01f);
-		}
 	}
 }

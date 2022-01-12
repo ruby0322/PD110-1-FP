@@ -8,7 +8,7 @@
 
 class Lava {
 private:
-	static const int DAMAGE = 5;
+	static const int DAMAGE = 4;
 
 	sf::Sprite sprite;
 	sf::Texture texture;

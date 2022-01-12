@@ -5,13 +5,14 @@
 #include "Tile.hpp"
 #include "SoundManager.hpp"
 
+// Marcos / Preprocessor
 #ifndef BOX_HPP
 	#define BOX_HPP
 
 class Box
 {
 private:
-	static const int MAX_HP = 50;
+	static const int MAX_HP = 40;
 	static const int MAX_CONTAINING_CNT = 3;
 
 	float hp;

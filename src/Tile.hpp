@@ -19,6 +19,7 @@ public:
 	static const int TYPE_LAVA = 4;
 	static const int TYPE_WALL = 5;
 	static const int TYPE_BOX = 6;
+	static const int TYPE_PLANK = 7;
 
 	static const int TILE_SIZE = 32;
 

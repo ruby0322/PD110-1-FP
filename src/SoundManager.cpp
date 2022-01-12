@@ -74,10 +74,7 @@ void SoundManager::Clear()
 {
 	for (size_t i = 0; i < SoundManager::sounds.size(); ++i)
 		if (SoundManager::sounds[i].getStatus() == sf::Sound::Status::Stopped)
-		{
-			SoundManager::sounds.erase(SoundManager::sounds.begin() + i);
-			--i;
-		}
+			SoundManager::sounds.erase(SoundManager::sounds.begin() + i--);
 }
 
 void SoundManager::KillSound(int type)
@@ -85,10 +82,7 @@ void SoundManager::KillSound(int type)
 	sf::SoundBuffer* targetBufferPtr = SoundManager::GetBufferPtr(type);
 	for (size_t i = 0; i < SoundManager::sounds.size(); ++i)
 		if (SoundManager::sounds[i].getBuffer() == targetBufferPtr)
-		{
-			SoundManager::sounds.erase(SoundManager::sounds.begin() + i);
-			--i;
-		}
+			SoundManager::sounds.erase(SoundManager::sounds.begin() + i--);
 }
 
 void SoundManager::CheckInitialization()
@@ -102,13 +96,9 @@ void SoundManager::ToggleIntroMusic()
 	CheckInitialization();
 	SoundManager::isPlayingIntroMusic = !SoundManager::isPlayingIntroMusic;
 	if (SoundManager::isPlayingIntroMusic)
-	{
 		SoundManager::introMusic.play();
-	}
 	else
-	{
 		SoundManager::introMusic.pause();
-	}
 }
 
 void SoundManager::ToggleBattleMusic()
@@ -116,13 +106,9 @@ void SoundManager::ToggleBattleMusic()
 	CheckInitialization();
 	SoundManager::isPlayingBattleMusic = !SoundManager::isPlayingBattleMusic;
 	if (SoundManager::isPlayingBattleMusic)
-	{
 		SoundManager::battleMusic.play();
-	}
 	else
-	{
 		SoundManager::battleMusic.pause();
-	}
 }
 
 void SoundManager::PlaySoundEffect(int type)

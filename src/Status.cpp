@@ -39,10 +39,31 @@ bool Status::isReloading() const
 	return reloading;
 }
 
+bool Status::isBulletBoosted() const
+{
+	return bulletBoosted;
+}
+
+bool Status::isHealing() const
+{
+	return healing;
+}
+
+bool Status::isSpeedBoosted() const
+{
+	return speedBoosted;
+}
+
 void Status::reload()
 {
 	reloading = true;
 	reloadingTimer = 0.f;
+}
+
+void Status::heal()
+{
+	healing = true;
+	healingTimer = 0.f;
 }
 
 void Status::update(float deltaTime)
@@ -72,6 +93,15 @@ void Status::update(float deltaTime)
 		{
 			reloading = false;
 			reloadingTimer = 0.f;
+		}
+	}
+	if (healing)
+	{
+		healingTimer += deltaTime;
+		if (healingTimer >= Status::HEAL_DURATION)
+		{
+			healing = false;
+			healingTimer = 0.f;
 		}
 	}
 }
@@ -186,11 +216,7 @@ void Status::updateKeys(int number, const sf::Event& event)
 
 void Status::reset()
 {
-	pressingW = pressingA = pressingS = pressingD = false;
-	speedBoosted = true;
-	bulletBoosted = false;
-	reloading = false;
-	speedUpgradeTimer = 0.f;
-	bulletUpgradeTimer = 0.f;
-	reloadingTimer = 0.f;
+	pressingW = pressingA = pressingS = pressingD = pressingV = false;
+	speedBoosted = bulletBoosted = reloading = healing = false;
+	speedUpgradeTimer = bulletUpgradeTimer = reloadingTimer = healingTimer = 0.f;
 }

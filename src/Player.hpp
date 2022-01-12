@@ -18,13 +18,14 @@ public:
 
 	Status status;
 
-	Player(const sf::Vector2f& border, int number);
-	~Player();
+	Player(const sf::Vector2f& border, int number, std::vector<Projectile*>* projectiles);
+	~Player() override;
 
 	void reset(const sf::Vector2f& newPos);
 	void dealDamage(float damage);
 	void heal(float amount);
 	int getNumber() const;
+	float getHp() const;
 
 	void handleEvent(const sf::Event& event) override;
 	void update(float deltaTime) override;
@@ -43,6 +44,7 @@ private:
 	void checkBorder();
 	bool isDriving() const;
 	void shoot();
+	void checkProjectiles();
 };
 
 #endif

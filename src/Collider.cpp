@@ -66,8 +66,8 @@ bool Collider::checkCollision(Collider& other, float push)
 			}
 			else
 			{
-					move(0.f, -intersectY * (1.f - push));
-					other.move(0.f, intersectY * push);
+				move(0.f, -intersectY * (1.f - push));
+				other.move(0.f, intersectY * push);
 			}
 		}
 		return true;
