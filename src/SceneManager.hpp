@@ -20,6 +20,8 @@ private:
 	void updateMainMenu(float deltaTime);
 	void handleEventBattle(const sf::Event& event);
 	void handleEventMainMenu(const sf::Event& event);
+	void clearDeadProjectiles();
+	void clearDeadItems();
 
 public:
 

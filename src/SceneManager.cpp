@@ -14,6 +14,30 @@ SceneManager::~SceneManager()
 		delete texts[i];
 }
 
+void SceneManager::clearDeadProjectiles()
+{
+	for (size_t i = 0; i < projectiles.size(); ++i)
+	{
+		if (projectiles[i]->isDead())
+		{
+			delete projectiles[i];
+			projectiles.erase(projectiles.begin() + i--);
+		}
+	}
+}
+
+void SceneManager::clearDeadItems()
+{
+	for (size_t i = 0; i < items.size(); ++i)
+	{
+		if (items[i]->isDead())
+		{
+			delete items[i];
+			items.erase(items.begin() + i--);
+		}
+	}
+}
+
 void SceneManager::setBufferSize(int width, int height)
 {
 	sceneBuffer.create(width, height);
@@ -29,17 +53,22 @@ int SceneManager::getScene() const
 	return currScene;
 }
 
-void SceneManager::updateBattle(float deltaTime) {
+void SceneManager::updateBattle(float deltaTime)
+{
 	map.update(deltaTime);
-	for (size_t i = 0; i < entities.size(); ++i)
-	{
-		auto& entity = entities[i];
-		entity->update(deltaTime);
-	}
+	clearDeadProjectiles();
+	clearDeadItems();
+	for (auto& player : players)
+		player->update(deltaTime);
+	for (auto& item : items)
+		item->update(deltaTime);
+	for (auto& projectile : projectiles)
+		projectile->update(deltaTime);
 	players[0]->getCollider().checkCollision(players[1]->getCollider(), .5f);
 }
 
-void SceneManager::updateMainMenu(float deltaTime) {
+void SceneManager::updateMainMenu(float deltaTime)
+{
 	for (size_t i = 0; i < mainMenuEntities.size(); ++i)
 	{
 		auto& entity = mainMenuEntities[i];
@@ -47,28 +76,33 @@ void SceneManager::updateMainMenu(float deltaTime) {
 	}
 }
 
-void SceneManager::update(float deltaTime) {
-	switch (currScene) {
-		case SceneManager::SCENE_BATTLE:
-		updateBattle(deltaTime);
-		break;
-		case SceneManager::SCENE_MAIN_MENU:
-		updateMainMenu(deltaTime);
-		break;
-		default:
-		break;
-	}
-}
-
-void SceneManager::handleEventBattle(const sf::Event& event) {
-	for (size_t i = 0; i < entities.size(); ++i)
+void SceneManager::update(float deltaTime)
+{
+	switch (currScene)
 	{
-		auto& entity = entities[i];
-		entity->handleEvent(event);
+		case SceneManager::SCENE_BATTLE:
+			updateBattle(deltaTime);
+			break;
+		case SceneManager::SCENE_MAIN_MENU:
+			updateMainMenu(deltaTime);
+			break;
+		default:
+			break;
 	}
 }
 
-void SceneManager::handleEventMainMenu(const sf::Event& event) {
+void SceneManager::handleEventBattle(const sf::Event& event)
+{
+	for (auto& player : players)
+		player->handleEvent(event);
+	for (auto& item : items)
+		item->handleEvent(event);
+	for (auto& projectile : projectiles)
+		projectile->handleEvent(event);
+}
+
+void SceneManager::handleEventMainMenu(const sf::Event& event)
+{
 	for (size_t i = 0; i < mainMenuEntities.size(); ++i)
 	{
 		auto& entity = mainMenuEntities[i];
@@ -78,15 +112,16 @@ void SceneManager::handleEventMainMenu(const sf::Event& event) {
 
 void SceneManager::handleEvent(const sf::Event& event)
 {
-	switch (currScene) {
+	switch (currScene)
+	{
 		case SceneManager::SCENE_BATTLE:
-		handleEventBattle(event);
-		break;
+			handleEventBattle(event);
+			break;
 		case SceneManager::SCENE_MAIN_MENU:
-		handleEventMainMenu(event);
-		break;
+			handleEventMainMenu(event);
+			break;
 		default:
-		break;
+			break;
 	}
 }
 
@@ -130,8 +165,12 @@ void SceneManager::renderSceneBuffer()
 		case SceneManager::SCENE_BATTLE:
 			sceneBuffer.clear(sf::Color(94, 196, 183));
 			map.draw(sceneBuffer);
-			for (const auto& entity : entities)
-				sceneBuffer.draw(entity->sprite);
+			for (const auto& player : players)
+				sceneBuffer.draw(player->sprite);
+			for (const auto& item : items)
+				sceneBuffer.draw(item->sprite);
+			for (const auto& projectile : projectiles)
+				sceneBuffer.draw(projectile->sprite);
 			break;
 		case SceneManager::SCENE_WIN:
 			break;

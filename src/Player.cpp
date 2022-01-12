@@ -1,25 +1,45 @@
 #include "Player.hpp"
 
-const float Player::MAX_V = .5f;
+const float Player::DEFAULT_VELOCITY = .5f;
+const float Player::DEFAULT_DAMAGE = 8.f;
+const float Player::MAX_HP = 100.f;
 const float Player::DRIVING_SOUND_INTERVAL = 1.f;
 const float Player::OMEGA = 2.5f;
-const float Player::PI = 3.1415926535;
 
-Player::Player(const sf::Vector2f& border, std::vector<sf::Texture> frames, int number) :
-	Entity(frames),
+Player::Player(const sf::Vector2f& border, int number) :
+	Entity(),
 	hp(Player::MAX_HP)
 {
 	direction = 0.f;
 	drivingSoundTimer = 0.f;
-	pressingW = pressingA = pressingS = pressingD = false;
 	this->border = border;
 	this->number = number;
 	sprite.scale(.06f, .06f);
+	sf::Texture tex;
+	if (number == 1)
+		tex.loadFromFile("content/Image/Tank/blue_tank_small.png");
+	else
+		tex.loadFromFile("content/Image/Tank/red_tank_small.png");
+	frames.push_back(tex);
+	sprite.setTexture(tex);
+	resetCenter();
 }
 
 Player::~Player()
 {
-	std::cout << "[Player] Player" << number << "destructed." << std::endl;
+	std::cout << "[Player] Player" << number << " destructed." << std::endl;
+}
+
+void Player::shoot()
+{
+	if (number == 1) {
+		Projectile* bullet = new Projectile(Projectile::TYPE_BLUE_BULLET, sprite.getPosition(), direction);
+		projectiles->push_back(bullet);
+	}
+	else {
+		Projectile* bullet = new Projectile(Projectile::TYPE_RED_BULLET, sprite.getPosition(), direction);
+		projectiles->push_back(bullet);
+	}
 }
 
 bool Player::isDriving() const
@@ -29,120 +49,26 @@ bool Player::isDriving() const
 
 void Player::handleEvent(const sf::Event& event)
 {
-	if (number == 1)
-	{
-		switch (event.type)
-		{
-			case sf::Event::KeyPressed:
-				switch (event.key.code)
-				{
-					case sf::Keyboard::A:
-						pressingA = true;
-						break;
-					case sf::Keyboard::D:
-						pressingD = true;
-						break;
-					case sf::Keyboard::W:
-						pressingW = true;
-						break;
-					case sf::Keyboard::S:
-						pressingS = true;
-						break;
-					default:
-						break;
-				}
-				break;
-			case sf::Event::KeyReleased:
-				switch (event.key.code)
-				{
-					case sf::Keyboard::A:
-						pressingA = false;
-						break;
-					case sf::Keyboard::D:
-						pressingD = false;
-						break;
-					case sf::Keyboard::W:
-						pressingW = false;
-						break;
-					case sf::Keyboard::S:
-						pressingS = false;
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-	}
-	else if (number == 2)
-	{
-		switch (event.type)
-		{
-			case sf::Event::KeyPressed:
-				switch (event.key.code)
-				{
-					case sf::Keyboard::Left:
-						pressingA = true;
-						break;
-					case sf::Keyboard::Right:
-						pressingD = true;
-						break;
-					case sf::Keyboard::Up:
-						pressingW = true;
-						break;
-					case sf::Keyboard::Down:
-						pressingS = true;
-						break;
-					default:
-						break;
-				}
-				break;
-			case sf::Event::KeyReleased:
-				switch (event.key.code)
-				{
-					case sf::Keyboard::Left:
-						pressingA = false;
-						break;
-					case sf::Keyboard::Right:
-						pressingD = false;
-						break;
-					case sf::Keyboard::Up:
-						pressingW = false;
-						break;
-					case sf::Keyboard::Down:
-						pressingS = false;
-						break;
-
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-	}
+	status.updateKeys(number, event);
 	vx = vy = 0;
 	float deltaAngle = 0;
-	if (pressingA)
-	{
+
+	if (status.pressingA)
 		deltaAngle -= Player::OMEGA;
-	}
-	if (pressingD)
-	{
+	if (status.pressingD)
 		deltaAngle += Player::OMEGA;
-	}
+
 	direction += deltaAngle;
-	float angle = direction * (Player::PI / 180);
-	if (pressingW)
+	float angle = direction * (Generator::PI / 180);
+	if (status.pressingW)
 	{
-		vx += MAX_V * sin(angle);
-		vy -= MAX_V * cos(angle);
+		vx += status.getVelocity(Player::DEFAULT_VELOCITY) * sin(angle);
+		vy -= status.getVelocity(Player::DEFAULT_VELOCITY) * cos(angle);
 	}
-	if (pressingS)
+	if (status.pressingS)
 	{
-		vx -= MAX_V * sin(angle);
-		vy += MAX_V * cos(angle);
+		vx -= status.getVelocity(Player::DEFAULT_VELOCITY) * sin(angle);
+		vy += status.getVelocity(Player::DEFAULT_VELOCITY) * cos(angle);
 	}
 }
 
@@ -175,38 +101,43 @@ void Player::update(float deltaTime)
 		if (drivingSoundTimer >= Player::DRIVING_SOUND_INTERVAL)
 		{
 			if (number == 1)
-			{
 				SoundManager::PlaySoundEffect(SoundManager::TYPE_TANK_ONE_DRIVING);
-			}
 			else
-			{
 				SoundManager::PlaySoundEffect(SoundManager::TYPE_TANK_TWO_DRIVING);
-			}
-			drivingSoundTimer -= Player::DRIVING_SOUND_INTERVAL;
+			drivingSoundTimer = 0.f;
 		}
 	}
 	else
 	{
 		if (number == 1)
-		{
 			SoundManager::KillSound(SoundManager::TYPE_TANK_ONE_DRIVING);
-		}
 		else
-		{
 			SoundManager::KillSound(SoundManager::TYPE_TANK_TWO_DRIVING);
-		}
 	}
+	if (status.pressingV && !status.isReloading())
+	{
+		// shoot();
+		status.reload();
+	}
+
 	checkBorder();
+	status.update(deltaTime);
 	updateTimer += deltaTime;
 	drivingSoundTimer += deltaTime;
 }
 
-void Player::dealDamage(int damage)
+void Player::dealDamage(float damage)
 {
 	hp -= damage;
-	if (hp <= 0) kill();
-	std::cout << "[Player" << number << "] "
-			  << "a damage of 5 was dealt, " << hp << " left." << std::endl;
+	if (hp <= 0)
+		kill();
+	// std::cout << "[Player" << number << "] "
+	// 		  << "a damage of 5 was dealt, " << hp << " left." << std::endl;
+}
+
+void Player::heal(float amount)
+{
+	hp += amount;
 }
 
 void Player::reset(const sf::Vector2f& newPos)

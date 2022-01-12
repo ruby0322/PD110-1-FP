@@ -1,45 +1,48 @@
 #include "Entity.hpp"
+#include "Generator.hpp"
+#include "Projectile.hpp"
 #include "SoundManager.hpp"
+#include "Status.hpp"
 
 #ifndef PLAYER_HPP
-#define PLAYER_HPP
+	#define PLAYER_HPP
 
 class Player : public Entity
 {
 public:
-	static const float PI;
-	static const float MAX_V;
+	static const float DEFAULT_VELOCITY;
+	static const float DEFAULT_DAMAGE;
 	static const float OMEGA;
 	static const float DRIVING_SOUND_INTERVAL;
-	static const int MAX_HP = 100;
+	static const float MAX_HP;
 
-	Player(const sf::Vector2f& border, std::vector<sf::Texture> frames, int number);
+	Status status;
+
+	Player(const sf::Vector2f& border, int number);
 	~Player();
 
 	void reset(const sf::Vector2f& newPos);
-	void dealDamage(int damage);
+	void dealDamage(float damage);
+	void heal(float amount);
 	int getNumber() const;
 
+	void handleEvent(const sf::Event& event) override;
+	void update(float deltaTime) override;
 
 private:
 	float direction;
 	float drivingSoundTimer;
 
-	int hp;
+	float hp;
 	int number;
-
-	bool pressingW;
-	bool pressingA;
-	bool pressingS;
-	bool pressingD;
 
 	sf::Vector2f border;
 
-	void checkBorder();
-	void handleEvent(const sf::Event& event) override;
-	void update(float deltaTime) override;
-	bool isDriving() const;
-};
+	std::vector<Projectile*>* projectiles;
 
+	void checkBorder();
+	bool isDriving() const;
+	void shoot();
+};
 
 #endif

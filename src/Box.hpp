@@ -3,6 +3,7 @@
 #include "Player.hpp"
 #include "Projectile.hpp"
 #include "Tile.hpp"
+#include "SoundManager.hpp"
 
 #ifndef BOX_HPP
 	#define BOX_HPP
@@ -11,6 +12,7 @@ class Box
 {
 private:
 	static const int MAX_HP = 50;
+	static const int MAX_CONTAINING_CNT = 3;
 
 	float hp;
 
@@ -22,6 +24,8 @@ private:
 	std::vector<Player*>* players;
 
 	Collider collider;
+
+	void dropItems();
 
 public:
 	sf::Sprite sprite;

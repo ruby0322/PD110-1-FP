@@ -1,5 +1,5 @@
-#include "Platform/Platform.hpp"
 #include "Collider.hpp"
+#include "Platform/Platform.hpp"
 
 #ifndef ENTITY_HPP
 	#define ENTITY_HPP
@@ -24,13 +24,16 @@ public:
 
 	Entity();
 	Entity(const std::vector<sf::Texture>& frames);
-	~Entity();
+	virtual ~Entity();
 
 	bool collidesWith(const Entity& anotherEntity);
 	void setFrame(int frameIndex);
 	void updateFrame();
 	void updateMovement();
 	void kill();
+	bool isDead() const;
+	void resetCenter();
+
 	Collider& getCollider();
 	virtual void handleEvent(const sf::Event& event);
 	virtual void update(float deltaTime);

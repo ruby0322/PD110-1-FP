@@ -1,4 +1,5 @@
 #include "Entity.hpp"
+#include "Generator.hpp"
 
 #ifndef PROJECTILE_HPP
 #define PROJECTILE_HPP
@@ -6,13 +7,20 @@
 class Projectile : public Entity
 {
 public:
-	Projectile(const std::vector<sf::Texture>& frames, int type);
+
+	static const int TYPE_BLUE_BULLET = 0;
+	static const int TYPE_RED_BULLET = 1;
+	static const float DEFAULT_VELOCITY;
+
+	Projectile(int type, const sf::Vector2f& pos, float direction);
 	~Projectile();
-	int getDamage() const;
+	float getDamage() const;
 
 private:
+
 	int type;
-	int damage;
+	float damage;
+
 };
 
 #endif

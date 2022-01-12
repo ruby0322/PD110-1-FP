@@ -1,11 +1,30 @@
 #include "Item.hpp"
 
-Item::Item(int borderx, int bordery, const std::vector<sf::Texture>& frames) :
-	Entity(frames),
-	borderx(borderx),
-	bordery(bordery)
+Item::Item(int type, const sf::Vector2f& pos, std::vector<Player*>* players) :
+	Entity(),
+	type(type)
 {
-	sprite.setPosition(rand() % borderx, rand() % bordery);
+	this->players = players;
+	sprite.setPosition(pos);
+	sf::Texture tex;
+	switch (type) {
+		case Item::TYPE_HEALTH_POTION:
+		tex.loadFromFile("content/Image/Item/health_potion.png");
+		frames.push_back(tex);
+		break;
+		case Item::TYPE_BULLET_UPGRADE:
+		tex.loadFromFile("content/Image/Item/bullet_upgrade.png");
+		frames.push_back(tex);
+		break;
+		case Item::TYPE_SPEED_UPGRADE:
+		tex.loadFromFile("content/Image/Item/speed_upgrade.png");
+		frames.push_back(tex);
+		break;
+		default:
+		break;
+	}
+	sprite.setTexture(frames[0]);
+	sprite.scale(.06f, .06f);
 }
 
 Item::~Item()
@@ -24,15 +43,25 @@ void Item::handleEvent(const sf::Event& event) {
 void Item::update(float deltaTime)
 {
 	updateTimer += deltaTime;
-
-	if (updateTimer >= Item::UPDATE_TIME)
-	{
-		updateFrame();
-		updateTimer -= Item::UPDATE_TIME;
+	for (auto& player : *players) {
+		if (player->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())) {
+			switch (type) {
+				case Item::TYPE_HEALTH_POTION:
+				player->heal(Item::HEALTH_POTION_HEAL);
+				break;
+				case Item::TYPE_SPEED_UPGRADE:
+				player->status.speedUpgrade();
+				break;
+				case Item::TYPE_BULLET_UPGRADE:
+				player->status.bulletUpgrade();
+				break;
+				default:
+				break;
+			}
+			SoundManager::PlaySoundEffect(SoundManager::TYPE_ITEM_PICKED);
+			kill();
+		}
 	}
+
 }
 
-void Item::reset()
-{
-	sprite.setPosition(rand() % borderx, rand() % bordery);
-}

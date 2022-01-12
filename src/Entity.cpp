@@ -14,17 +14,28 @@ Entity::Entity(const std::vector<sf::Texture>& frames) :
 	collider.setTarget(&sprite);
 }
 
-Entity::Entity()
+Entity::Entity() :
+	isAlive(true)
 {
 	updateTimer = 0;
 	currFrame = 0.f;
 	frameCnt = 0;
-	sprite.setOrigin(sprite.getTextureRect().width / 2.f, sprite.getTextureRect().height / 2.f);
 	collider.setTarget(&sprite);
+	resetCenter();
 }
 
 Entity::~Entity()
 {
+}
+
+void Entity::resetCenter()
+{
+	sprite.setOrigin(sprite.getTextureRect().width / 2.f, sprite.getTextureRect().height / 2.f);
+}
+
+bool Entity::isDead() const
+{
+	return !isAlive;
 }
 
 Collider& Entity::getCollider()

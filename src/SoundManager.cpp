@@ -7,14 +7,6 @@ bool SoundManager::isPlayingBattleMusic = false;
 float SoundManager::musicVolume = 12.f;
 float SoundManager::soundVolume = 50.f;
 
-SoundManager::SoundManager()
-{
-}
-
-SoundManager::~SoundManager()
-{
-}
-
 std::vector<sf::Sound> SoundManager::sounds;
 sf::Sound SoundManager::introMusic;
 sf::Sound SoundManager::battleMusic;
@@ -26,8 +18,18 @@ sf::SoundBuffer SoundManager::SOUND_TANK_SHOT;
 sf::SoundBuffer SoundManager::SOUND_BOX_DESTROYED;
 sf::SoundBuffer SoundManager::SOUND_TANK_ONE_DRIVING;
 sf::SoundBuffer SoundManager::SOUND_TANK_TWO_DRIVING;
+sf::SoundBuffer SoundManager::SOUND_ITEM_PICKED;
 
-void SoundManager::Init() {
+SoundManager::SoundManager()
+{
+}
+
+SoundManager::~SoundManager()
+{
+}
+
+void SoundManager::Init()
+{
 	MUSIC_INTRO.loadFromFile("content/Audio/introMusic.wav");
 	MUSIC_BATTLE.loadFromFile("content/Audio/battleMusic.wav");
 	SOUND_FIRE_SHOT.loadFromFile("content/Audio/fireShot.wav");
@@ -35,6 +37,7 @@ void SoundManager::Init() {
 	SOUND_BOX_DESTROYED.loadFromFile("content/Audio/boxDestroyed.wav");
 	SOUND_TANK_ONE_DRIVING.loadFromFile("content/Audio/tankDriving.wav");
 	SOUND_TANK_TWO_DRIVING.loadFromFile("content/Audio/tankDriving.wav");
+	SOUND_ITEM_PICKED.loadFromFile("content/Audio/itemPicked.wav");
 
 	introMusic.setBuffer(MUSIC_INTRO);
 	battleMusic.setBuffer(MUSIC_BATTLE);
@@ -46,47 +49,50 @@ void SoundManager::Init() {
 	SoundManager::classInitialized = true;
 }
 
-sf::SoundBuffer* SoundManager::GetBufferPtr(int type) {
-	switch (type) {
+sf::SoundBuffer* SoundManager::GetBufferPtr(int type)
+{
+	switch (type)
+	{
 		case SoundManager::TYPE_FIRE_SHOT:
-		return &SoundManager::SOUND_FIRE_SHOT;
-		break;
+			return &SoundManager::SOUND_FIRE_SHOT;
 		case SoundManager::TYPE_TANK_SHOT:
-		return &SoundManager::SOUND_TANK_SHOT;
-		break;
+			return &SoundManager::SOUND_TANK_SHOT;
 		case SoundManager::TYPE_BOX_DESTROYED:
-		return &SoundManager::SOUND_BOX_DESTROYED;
-		break;
+			return &SoundManager::SOUND_BOX_DESTROYED;
 		case SoundManager::TYPE_TANK_ONE_DRIVING:
-		return &SoundManager::SOUND_TANK_ONE_DRIVING;
-		break;
+			return &SoundManager::SOUND_TANK_ONE_DRIVING;
 		case SoundManager::TYPE_TANK_TWO_DRIVING:
-		return &SoundManager::SOUND_TANK_TWO_DRIVING;
-		break;
+			return &SoundManager::SOUND_TANK_TWO_DRIVING;
+		case SoundManager::TYPE_ITEM_PICKED:
+			return &SoundManager::SOUND_ITEM_PICKED;
 		default:
-		return nullptr;
-		break;
+			return nullptr;
 	}
 }
 
-void SoundManager::Clear() {
+void SoundManager::Clear()
+{
 	for (size_t i = 0; i < SoundManager::sounds.size(); ++i)
-		if (SoundManager::sounds[i].getStatus() == sf::Sound::Status::Stopped) {
+		if (SoundManager::sounds[i].getStatus() == sf::Sound::Status::Stopped)
+		{
 			SoundManager::sounds.erase(SoundManager::sounds.begin() + i);
 			--i;
 		}
 }
 
-void SoundManager::KillSound(int type) {
+void SoundManager::KillSound(int type)
+{
 	sf::SoundBuffer* targetBufferPtr = SoundManager::GetBufferPtr(type);
 	for (size_t i = 0; i < SoundManager::sounds.size(); ++i)
-		if (SoundManager::sounds[i].getBuffer() == targetBufferPtr) {
+		if (SoundManager::sounds[i].getBuffer() == targetBufferPtr)
+		{
 			SoundManager::sounds.erase(SoundManager::sounds.begin() + i);
 			--i;
 		}
 }
 
-void SoundManager::CheckInitialization() {
+void SoundManager::CheckInitialization()
+{
 	if (!SoundManager::classInitialized)
 		SoundManager::Init();
 }
@@ -119,9 +125,11 @@ void SoundManager::ToggleBattleMusic()
 	}
 }
 
-void SoundManager::PlaySoundEffect(int type) {
+void SoundManager::PlaySoundEffect(int type)
+{
 	CheckInitialization();
-	if (0 <= type && type <= 4) {
+	if (0 <= type && type <= 5)
+	{
 		sf::Sound sound;
 		sound.setBuffer(*SoundManager::GetBufferPtr(type));
 		sound.setVolume(SoundManager::soundVolume);

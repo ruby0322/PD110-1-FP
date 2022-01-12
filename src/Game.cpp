@@ -50,24 +50,19 @@ void Game::init(float windowWidth = 400.f,
 	miniMap.setCenter(sf::Vector2f(windowWidth / 2.f, windowHeight / 2.f));
 	miniMap.setViewport(sf::FloatRect(.36f, .016f, .28f, .28f));
 
-	sf::Texture tex;
-	std::vector<sf::Texture> player1Frames;
-	std::vector<sf::Texture> player2Frames;
-	tex.loadFromFile("content/Image/Tank/blue_tank_small.png");
-	player1Frames.push_back(tex);
-	tex.loadFromFile("content/Image/Tank/red_tank_small.png");
-	player2Frames.push_back(tex);
+
 
 	sf::Vector2f border(window.getSize().x, window.getSize().y);
 
-	Player* player1 = new Player(border, player1Frames, 1);
-	Player* player2 = new Player(border, player2Frames, 2);
+	Player* player1 = new Player(border, 1);
+	Player* player2 = new Player(border, 2);
 
-	sceneManager.entities.push_back(player1);
-	sceneManager.entities.push_back(player2);
 	sceneManager.players.push_back(player1);
 	sceneManager.players.push_back(player2);
 
+	// Item* newItem = new Item(0, sf::Vector2f(100.f, 100.f), &sceneManager.players);
+	// sceneManager.items.push_back(newItem);
+	sf::Texture tex;
 	std::vector<sf::Texture> playButtonFrames;
 	tex.loadFromFile("content/Image/Scene/MainMenu/PlayButton/Play_Pressed.png");
 	playButtonFrames.push_back(tex);
