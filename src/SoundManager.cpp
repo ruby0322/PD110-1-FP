@@ -4,8 +4,8 @@ bool SoundManager::classInitialized = false;
 bool SoundManager::isPlayingIntroMusic = false;
 bool SoundManager::isPlayingBattleMusic = false;
 
-float SoundManager::musicVolume = 18.f;
-float SoundManager::soundVolume = 70.f;
+float SoundManager::musicVolume = 12.f;
+float SoundManager::soundVolume = 50.f;
 
 SoundManager::SoundManager()
 {

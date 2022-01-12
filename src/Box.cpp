@@ -29,21 +29,19 @@ void Box::draw(sf::RenderTexture& bufferMap) const
 	bufferMap.draw(sprite);
 }
 
-void Box::update()
-{
-	for (auto& projectile : *projectiles)
-	{
-		if (projectile->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
-		{
-			hp -= projectile->getDamage();
-			if (hp <= 0)
-				break;
-		}
-	}
+void Box::dealDamage(float damage) {
+	hp -= damage;
 	if (hp <= 0)
 	{
 		isAlive = false;
 	}
+}
+
+void Box::update()
+{
+	for (auto& projectile : *projectiles)
+		if (projectile->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
+			dealDamage(projectile->getDamage());
 	for (auto& player : *players) {
 		if (collider.checkCollision(player->getCollider(), .8f))
 			std::cout << "[Box] Collied with player" << player->getNumber() << std::endl;

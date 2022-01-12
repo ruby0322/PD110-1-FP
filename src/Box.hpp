@@ -12,10 +12,9 @@ class Box
 private:
 	static const int MAX_HP = 50;
 
-	int hp;
+	float hp;
 
 	std::vector<int> containings;
-	sf::Sprite sprite;
 	sf::Texture texture;
 
 	std::vector<Item*>* items;
@@ -25,12 +24,14 @@ private:
 	Collider collider;
 
 public:
+	sf::Sprite sprite;
 	Box(const sf::Vector2f& pos, std::vector<Item*>* items, std::vector<Projectile*>* projectiles, std::vector<Player*>* players);
 	~Box();
 
 	void draw(sf::RenderTexture& bufferMap) const;
 	void update();
 	Collider& getCollider();
+	void dealDamage(float damage);
 	bool isAlive;
 };
 

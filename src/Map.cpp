@@ -79,7 +79,7 @@ void Map::loadMap(int matrix[Map::MAP_SIZE][Map::MAP_SIZE])
 				{
 					Tile* tile = new Tile(Tile::TYPE_ROCK, pos);
 					tiles.push_back(tile);
-					Lava* lava = new Lava(pos, players);
+					Lava* lava = new Lava(pos, players, &boxes);
 					lavas.push_back(lava);
 				}
 				else if (matrix[i][j] == Tile::TYPE_BOX)
@@ -119,11 +119,21 @@ void Map::update(float deltaTime)
 {
 	for (auto& lava : lavas)
 		lava->update(deltaTime);
-	for (auto& box : boxes)
-		box->update();
+
+	int boxCnt = boxes.size();
+	for (int i = 0; i < boxCnt; ++i) {
+		if (boxes[i]->isAlive)
+			boxes[i]->update();
+		else {
+			delete boxes[i];
+			boxes.erase(boxes.begin() + i--);
+		}
+	}
+
 	for (auto& wall : walls)
 		wall->update();
-	int boxCnt = boxes.size();
+
+	boxCnt = boxes.size();
 	for (int i = 0; i < boxCnt; ++i)
 	{
 		for (int j = 0; j < boxCnt; ++j)

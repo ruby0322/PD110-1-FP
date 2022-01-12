@@ -1,10 +1,11 @@
 #include "Lava.hpp"
 
-Lava::Lava(const sf::Vector2f& pos, std::vector<Player*>* players) :
+Lava::Lava(const sf::Vector2f& pos, std::vector<Player*>* players, std::vector<Box*>* boxes) :
 	timer1(0),
 	timer2(0)
 {
 	this->players = players;
+	this->boxes = boxes;
 	texture.loadFromFile("content/Image/Lava/lava.png");
 	sprite.setPosition(pos);
 	sprite.setTexture(texture);
@@ -41,5 +42,12 @@ void Lava::update(float deltaTime)
 	{
 		timer2 -= Lava::DAMAGE_INTERVAL;
 		(*players)[1]->dealDamage(Lava::DAMAGE);
+	}
+	for (auto& box : *boxes)
+	{
+		if (box->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
+		{
+			box->dealDamage(Lava::DAMAGE * .01f);
+		}
 	}
 }
