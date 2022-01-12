@@ -7,13 +7,10 @@ Tile::Tile(int type, const sf::Vector2f& pos) :
 	switch (type)
 	{
 		case Tile::TYPE_GRASS:
-			texture.loadFromFile("content/Image/Tile/grass.png");
+			texture.loadFromFile("content/Image/Tile/Grass/tile0" + Generator::RandNumStr(0, 61) + ".png");
 			break;
 		case Tile::TYPE_ROCK:
-			texture.loadFromFile("content/Image/Tile/rock.jpg");
-			break;
-		case Tile::TYPE_WALL:
-			texture.loadFromFile("content/Image/Tile/wall.png");
+			texture.loadFromFile("content/Image/Tile/Rock/floor_" + Generator::RandNumStr(1, 9) + ".png");
 			break;
 		case Tile::TYPE_SPAWNPOINT_ONE:
 		case Tile::TYPE_SPAWNPOINT_TWO:

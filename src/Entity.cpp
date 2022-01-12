@@ -5,16 +5,31 @@ const float Entity::UPDATE_TIME = .01f;
 Entity::Entity(const std::vector<sf::Texture>& frames) :
 	isAlive(true)
 {
-	currTime = 0;
+	updateTimer = 0;
 	currFrame = 0.f;
 	this->frames = std::vector<sf::Texture>(frames);
 	frameCnt = frames.size();
 	sprite.setTexture(frames[0]);
-	sprite.scale(2.f, 2.f);
+	sprite.setOrigin(sprite.getTextureRect().width / 2.f, sprite.getTextureRect().height / 2.f);
+	collider.setTarget(&sprite);
+}
+
+Entity::Entity()
+{
+	updateTimer = 0;
+	currFrame = 0.f;
+	frameCnt = 0;
+	sprite.setOrigin(sprite.getTextureRect().width / 2.f, sprite.getTextureRect().height / 2.f);
+	collider.setTarget(&sprite);
 }
 
 Entity::~Entity()
 {
+}
+
+Collider& Entity::getCollider()
+{
+	return collider;
 }
 
 void Entity::updateFrame()
@@ -30,16 +45,20 @@ void Entity::updateMovement()
 	sprite.move(vx, vy);
 }
 
-void Entity::update(const sf::Event& event, float deltaTime)
+void Entity::update(float deltaTime)
+{
+	updateTimer += deltaTime;
+	if (updateTimer >= Entity::UPDATE_TIME)
+		updateTimer -= Entity::UPDATE_TIME;
+}
+
+void Entity::handleEvent(const sf::Event& event)
 {
 	switch (event.type)
 	{
 		default:
 			break;
 	}
-	currTime += deltaTime;
-	if (currTime >= Entity::UPDATE_TIME)
-		currTime -= Entity::UPDATE_TIME;
 }
 
 bool Entity::collidesWith(const Entity& anotherEntity)
@@ -47,4 +66,12 @@ bool Entity::collidesWith(const Entity& anotherEntity)
 	return this->sprite.getGlobalBounds().intersects(anotherEntity.sprite.getGlobalBounds());
 }
 
+void Entity::setFrame(int frameIndex)
+{
+	sprite.setTexture(frames[frameIndex]);
+}
 
+void Entity::kill()
+{
+	isAlive = false;
+}

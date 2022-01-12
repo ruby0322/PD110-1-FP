@@ -10,7 +10,8 @@ public:
 	~Item();
 
 	void reset();
-	void update(const sf::Event& event, float deltaTime) override;
+	void handleEvent(const sf::Event& event) override;
+	void update(float deltaTime) override;
 
 	int borderx;
 	int bordery;

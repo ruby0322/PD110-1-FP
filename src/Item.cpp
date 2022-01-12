@@ -10,20 +10,25 @@ Item::Item(int borderx, int bordery, const std::vector<sf::Texture>& frames) :
 
 Item::~Item()
 {
+	std::cout << "[Item] Some item destructed." << std::endl;
 }
 
-void Item::update(const sf::Event& event, float deltaTime)
-{
-	currTime += deltaTime;
+void Item::handleEvent(const sf::Event& event) {
 	switch (event.type)
 	{
 		default:
 			break;
 	}
-	if (currTime >= Item::UPDATE_TIME)
+}
+
+void Item::update(float deltaTime)
+{
+	updateTimer += deltaTime;
+
+	if (updateTimer >= Item::UPDATE_TIME)
 	{
 		updateFrame();
-		currTime -= Item::UPDATE_TIME;
+		updateTimer -= Item::UPDATE_TIME;
 	}
 }
 

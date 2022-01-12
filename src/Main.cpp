@@ -1,13 +1,11 @@
-#include "App.hpp"
-#include <ctime>
+#include "Game.hpp"
 
 int main()
 {
 	srand(time(nullptr));
-	App app;
-	app.init(960.f, 960.f, "I\'M Tanker");
-
-	app.run();
-
+	Game* game = new Game();
+	game->init(960.f, 960.f, "I\'M Tanker");
+	game->run();
+	delete game;
 	return 0;
 }

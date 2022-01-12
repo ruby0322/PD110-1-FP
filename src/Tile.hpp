@@ -1,7 +1,8 @@
 #include "Platform/Platform.hpp"
+#include "Generator.hpp"
 
 #ifndef TILE_HPP
-#define TILE_HPP
+	#define TILE_HPP
 
 class Tile
 {
@@ -20,7 +21,6 @@ public:
 	static const int TYPE_BOX = 6;
 
 	static const int TILE_SIZE = 32;
-
 
 	Tile(int type, const sf::Vector2f& pos);
 	~Tile();

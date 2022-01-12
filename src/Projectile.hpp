@@ -11,7 +11,6 @@ public:
 	int getDamage() const;
 
 private:
-	void checkCollision(Entity& anotherEntity);
 	int type;
 	int damage;
 };

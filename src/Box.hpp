@@ -1,10 +1,11 @@
+#include "Collider.hpp"
 #include "Item.hpp"
+#include "Player.hpp"
 #include "Projectile.hpp"
 #include "Tile.hpp"
-#include "Player.hpp"
 
 #ifndef BOX_HPP
-#define BOX_HPP
+	#define BOX_HPP
 
 class Box
 {
@@ -21,13 +22,16 @@ private:
 	std::vector<Projectile*>* projectiles;
 	std::vector<Player*>* players;
 
-public:
+	Collider collider;
 
+public:
 	Box(const sf::Vector2f& pos, std::vector<Item*>* items, std::vector<Projectile*>* projectiles, std::vector<Player*>* players);
 	~Box();
 
 	void draw(sf::RenderTexture& bufferMap) const;
 	void update();
+	Collider& getCollider();
+	bool isAlive;
 };
 
 #endif

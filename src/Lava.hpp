@@ -15,14 +15,16 @@ private:
 	float timer1;
 	float timer2;
 
+	std::vector<Player*>* players;
+
 public:
 
 	static const int DAMAGE_INTERVAL = 3;
 
-	Lava(const sf::Vector2f& pos);
+	Lava(const sf::Vector2f& pos, std::vector<Player*>* players);
 	~Lava();
 	void draw(sf::RenderTexture& bufferMap) const;
-	void update(std::vector<Player*> players, float deltaTime);
+	void update(float deltaTime);
 };
 
 #endif

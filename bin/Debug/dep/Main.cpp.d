@@ -1,10 +1,16 @@
-bin/Debug/obj/Main.cpp.o: src/Main.cpp src/App.hpp \
- src/Platform/Platform.hpp src/Platform/Win32/WindowsPlatform.hpp \
- src/Platform/IPlatform.hpp src/Entity.hpp src/Map.hpp src/Tile.hpp \
- src/Lava.hpp src/Player.hpp src/Item.hpp src/Box.hpp src/Projectile.hpp \
- src/MapLoader.hpp
+bin/Debug/obj/Main.cpp.o: src/Main.cpp src/Game.hpp src/Box.hpp \
+ src/Collider.hpp src/Platform/Platform.hpp \
+ src/Platform/Win32/WindowsPlatform.hpp src/Platform/IPlatform.hpp \
+ src/Item.hpp src/Entity.hpp src/Player.hpp src/SoundManager.hpp \
+ src/Projectile.hpp src/Tile.hpp src/Generator.hpp src/Button.hpp \
+ src/SceneManager.hpp src/Map.hpp src/Lava.hpp src/Wall.hpp \
+ src/MapManager.hpp
 
-src/App.hpp:
+src/Game.hpp:
+
+src/Box.hpp:
+
+src/Collider.hpp:
 
 src/Platform/Platform.hpp:
 
@@ -12,20 +18,28 @@ src/Platform/Win32/WindowsPlatform.hpp:
 
 src/Platform/IPlatform.hpp:
 
+src/Item.hpp:
+
 src/Entity.hpp:
-
-src/Map.hpp:
-
-src/Tile.hpp:
-
-src/Lava.hpp:
 
 src/Player.hpp:
 
-src/Item.hpp:
-
-src/Box.hpp:
+src/SoundManager.hpp:
 
 src/Projectile.hpp:
 
-src/MapLoader.hpp:
+src/Tile.hpp:
+
+src/Generator.hpp:
+
+src/Button.hpp:
+
+src/SceneManager.hpp:
+
+src/Map.hpp:
+
+src/Lava.hpp:
+
+src/Wall.hpp:
+
+src/MapManager.hpp:

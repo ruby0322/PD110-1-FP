@@ -9,14 +9,7 @@ Projectile::Projectile(const std::vector<sf::Texture>& frames, int type) :
 
 Projectile::~Projectile()
 {
-}
-
-void Projectile::checkCollision(Entity& anotherEntity)
-{
-	if (collidesWith(anotherEntity))
-	{
-		isAlive = false;
-	}
+	std::cout << "[Projectile] Some projectile destructed." << std::endl;
 }
 
 int Projectile::getDamage() const
