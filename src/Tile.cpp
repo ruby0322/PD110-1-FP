@@ -21,6 +21,7 @@ Tile::Tile(int type, const sf::Vector2f& pos) :
 	}
 	sprite.setTexture(texture);
 	sprite.scale(Tile::TILE_SIZE / (float)sprite.getTexture()->getSize().x, Tile::TILE_SIZE / (float)sprite.getTexture()->getSize().y);
+	sprite.setOrigin(sprite.getTextureRect().width / 2.f, sprite.getTextureRect().height / 2.f);
 }
 
 Tile::~Tile()

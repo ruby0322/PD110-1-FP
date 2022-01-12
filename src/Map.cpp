@@ -74,30 +74,31 @@ void Map::loadMap(int matrix[Map::MAP_SIZE][Map::MAP_SIZE])
 		for (int j = 0; j < Map::MAP_SIZE; ++j)
 			if (matrix[i][j] != -1)
 			{
+				sf::Vector2f pos(Tile::TILE_SIZE * j + Tile::TILE_SIZE / 2.f, Tile::TILE_SIZE * i + Tile::TILE_SIZE / 2.f);
 				if (matrix[i][j] == Tile::TYPE_LAVA)
 				{
-					Tile* tile = new Tile(Tile::TYPE_ROCK, sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i));
+					Tile* tile = new Tile(Tile::TYPE_ROCK, pos);
 					tiles.push_back(tile);
-					Lava* lava = new Lava(sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i), players);
+					Lava* lava = new Lava(pos, players);
 					lavas.push_back(lava);
 				}
 				else if (matrix[i][j] == Tile::TYPE_BOX)
 				{
-					Tile* tile = new Tile(Tile::TYPE_ROCK, sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i));
+					Tile* tile = new Tile(Tile::TYPE_ROCK, pos);
 					tiles.push_back(tile);
-					Box* box = new Box(sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i), items, projectiles, players);
+					Box* box = new Box(pos, items, projectiles, players);
 					boxes.push_back(box);
 				}
 				else if (matrix[i][j] == Tile::TYPE_WALL)
 				{
-					Tile* tile = new Tile(Tile::TYPE_ROCK, sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i));
+					Tile* tile = new Tile(Tile::TYPE_ROCK, pos);
 					tiles.push_back(tile);
-					Wall* wall = new Wall(sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i), players, projectiles);
+					Wall* wall = new Wall(pos, players, projectiles);
 					walls.push_back(wall);
 				}
 				else
 				{
-					Tile* tile = new Tile(matrix[i][j], sf::Vector2f(Tile::TILE_SIZE * j, Tile::TILE_SIZE * i));
+					Tile* tile = new Tile(matrix[i][j], pos);
 					tiles.push_back(tile);
 				}
 			}

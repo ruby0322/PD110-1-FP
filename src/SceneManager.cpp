@@ -102,14 +102,16 @@ void SceneManager::newRound(int mapNumber)
 
 	for (const auto& tile : map.getTiles())
 		if (tile->getType() == Tile::TYPE_SPAWNPOINT_ONE)
+		{
 			playerOnePos = tile->getSprite().getPosition();
-		else if (tile->getType() == Tile::TYPE_SPAWNPOINT_TWO)
+			break;
+		}
+	for (const auto& tile : map.getTiles())
+		if (tile->getType() == Tile::TYPE_SPAWNPOINT_TWO)
+		{
 			playerTwoPos = tile->getSprite().getPosition();
-
-	playerOnePos.x += Tile::TILE_SIZE / 2;
-	playerOnePos.y += Tile::TILE_SIZE / 2;
-	playerTwoPos.x += Tile::TILE_SIZE / 2;
-	playerTwoPos.y += Tile::TILE_SIZE / 2;
+			break;
+		}
 
 	players[0]->reset(playerOnePos);
 	players[1]->reset(playerTwoPos);
