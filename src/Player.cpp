@@ -4,7 +4,7 @@ const float Player::DEFAULT_VELOCITY = .5f;
 const float Player::DEFAULT_DAMAGE = 20.f;
 const float Player::MAX_HP = 100.f;
 const float Player::DRIVING_SOUND_INTERVAL = 1.f;
-const float Player::OMEGA = 2.5f;
+const float Player::OMEGA = 5.f;
 
 Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>* projectiles) :
 	Entity(),
@@ -16,7 +16,11 @@ Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>*
 	drivingSoundTimer = 0.f;
 	this->border = border;
 	this->number = number;
-	sprite.scale(.052f, .052f);
+	if (number == 2)
+		sprite.scale(.052f, .052f);
+	else
+		sprite.scale(.05f, .05f);
+
 	sf::Texture tex;
 	if (number == 1)
 		tex.loadFromFile("content/Image/Tank/blue_tank_small.png");

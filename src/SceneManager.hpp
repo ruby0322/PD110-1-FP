@@ -38,6 +38,9 @@ private:
 	sf::Vector2f fixCameraCenter(const sf::Vector2f& pos);
 	void updateCameras();
 
+	void clearItems();
+	void clearProjectiles();
+
 public:
 
 	static const int SCENE_MAIN_MENU = 0;

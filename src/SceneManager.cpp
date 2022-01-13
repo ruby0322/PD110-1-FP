@@ -34,6 +34,20 @@ void SceneManager::init(float windowWidth, float windowHeight)
 	sceneBuffer.create(windowWidth, windowHeight);
 }
 
+void SceneManager::clearItems()
+{
+	for (size_t i = 0; i < items.size(); ++i)
+		delete items[i];
+	items.clear();
+}
+
+void SceneManager::clearProjectiles()
+{
+	for (size_t i = 0; i < projectiles.size(); ++i)
+		delete projectiles[i];
+	projectiles.clear();
+}
+
 void SceneManager::clearDeadProjectiles()
 {
 	for (size_t i = 0; i < projectiles.size(); ++i)
@@ -268,6 +282,8 @@ void SceneManager::handleEvent(const sf::Event& event)
 
 void SceneManager::newRound(int mapNumber)
 {
+	clearItems();
+	clearProjectiles();
 	int matrix[30][30];
 	std::string filePath = "map/map" + std::to_string(mapNumber) + ".txt";
 	MapManager::LoadMapFromFile(matrix, filePath);

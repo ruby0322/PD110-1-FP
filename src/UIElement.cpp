@@ -128,7 +128,7 @@ UIElement::UIElement(int type, Player* player) :
 			sprite.setPosition(sf::Vector2f(190.f, 405.f));
 			sprite.setTexture(texture);
 			sprite.scale(72.f / (float)sprite.getTexture()->getSize().y, 72.f / (float)sprite.getTexture()->getSize().y);
-			sprite.rotate(5.f);
+			sprite.rotate(15.f);
 			isRotatingClockwise = true;
 			break;
 
@@ -138,7 +138,7 @@ UIElement::UIElement(int type, Player* player) :
 			sprite.setTexture(texture);
 			sprite.scale(41.f / (float)sprite.getTexture()->getSize().y, 41.f / (float)sprite.getTexture()->getSize().y);
 			sprite.setOrigin(sf::Vector2f(sprite.getTexture()->getSize().x, 0.f));
-			sprite.rotate(-5.f);
+			sprite.rotate(-15.f);
 			isRotatingClockwise = false;
 			break;
 
