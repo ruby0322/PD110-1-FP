@@ -86,3 +86,18 @@ void Entity::kill()
 {
 	isAlive = false;
 }
+
+void Entity::revive()
+{
+	isAlive = true;
+}
+
+void Entity::draw(sf::RenderTexture& buffer) const
+{
+	buffer.draw(sprite);
+}
+
+void Entity::draw(sf::RenderWindow& window) const
+{
+	window.draw(sprite);
+}

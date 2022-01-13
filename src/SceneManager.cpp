@@ -2,7 +2,9 @@
 
 SceneManager::SceneManager()
 {
-	setScene(SceneManager::SCENE_BATTLE);
+	currMap = 1;
+	buttonEvent = Button::EVENT_NONE;
+	setScene(SceneManager::SCENE_MAIN_MENU);
 	map.setTargets(&items, &projectiles, &players);
 }
 
@@ -12,6 +14,10 @@ SceneManager::~SceneManager()
 		delete[] entities[i];
 	for (size_t i = 0; i < texts.size(); ++i)
 		delete texts[i];
+	for (size_t i = 0; i < battleUiElements.size(); ++i)
+		delete battleUiElements[i];
+	for (size_t i = 0; i < mainMenuUiElements.size(); ++i)
+		delete mainMenuUiElements[i];
 }
 
 void SceneManager::init(float windowWidth, float windowHeight)
@@ -26,7 +32,6 @@ void SceneManager::init(float windowWidth, float windowHeight)
 	miniMap.setCenter(sf::Vector2f(windowWidth / 2.f, windowHeight / 2.f));
 	miniMap.setViewport(sf::FloatRect(.36f, .016f, .28f, .28f));
 	sceneBuffer.create(windowWidth, windowHeight);
-
 }
 
 void SceneManager::clearDeadProjectiles()
@@ -80,9 +85,29 @@ void SceneManager::setScene(int newScene)
 	currScene = newScene;
 }
 
-int SceneManager::getScene() const
+int& SceneManager::getScene()
 {
 	return currScene;
+}
+
+void SceneManager::handleButtonEvent()
+{
+	switch (buttonEvent)
+	{
+		case Button::EVENT_NEW_ROUND:
+			setScene(SceneManager::SCENE_BATTLE);
+			newRound(Generator::RandInt(1, 9));
+			std::cout << "..." << std::endl;
+			break;
+		case Button::EVENT_NEW_GAME:
+			setScene(SceneManager::SCENE_MAIN_MENU);
+			for (auto& player : players)
+				player->newGame();
+			break;
+		default:
+			break;
+	}
+	buttonEvent = Button::EVENT_NONE;
 }
 
 void SceneManager::updateBattle(float deltaTime)
@@ -91,23 +116,36 @@ void SceneManager::updateBattle(float deltaTime)
 	clearDeadProjectiles();
 	clearDeadItems();
 	for (auto& player : players)
+	{
+		if (player->isDead())
+		{
+			players[player->getNumber() % 2]->win();
+			winnerOfTheRound = player->getNumber() % 2;
+			setScene(SceneManager::SCENE_WIN);
+			if (players[player->getNumber() % 2]->isVictorious())
+			{
+				setScene(SceneManager::SCENE_VICTORY);
+				SoundManager::PlaySoundEffect(SoundManager::TYPE_VICTORY);
+			}
+			else
+				SoundManager::PlaySoundEffect(SoundManager::TYPE_WIN);
+			return;
+		}
 		player->update(deltaTime);
+	}
 	for (auto& item : items)
 		item->update(deltaTime);
 	for (auto& projectile : projectiles)
 		projectile->update(deltaTime);
-	for (auto& uiElement : uiElements)
-		uiElement->update();
+	for (auto& battleUiElement : battleUiElements)
+		battleUiElement->update(deltaTime);
 	players[0]->getCollider().checkCollision(players[1]->getCollider(), .5f);
 }
 
 void SceneManager::updateMainMenu(float deltaTime)
 {
-	for (size_t i = 0; i < mainMenuEntities.size(); ++i)
-	{
-		auto& entity = mainMenuEntities[i];
-		entity->update(deltaTime);
-	}
+	for (auto& elem : mainMenuUiElements)
+		elem->update(deltaTime);
 }
 
 void SceneManager::update(float deltaTime)
@@ -138,11 +176,32 @@ void SceneManager::handleEventBattle(const sf::Event& event)
 
 void SceneManager::handleEventMainMenu(const sf::Event& event)
 {
-	for (size_t i = 0; i < mainMenuEntities.size(); ++i)
-	{
-		auto& entity = mainMenuEntities[i];
-		entity->handleEvent(event);
-	}
+	for (auto& button : mainMenuButtons)
+		button->handleEvent(event);
+}
+
+void SceneManager::handleEventHowToPlay(const sf::Event& event)
+{
+	for (auto& button : howToPlayButtons)
+		button->handleEvent(event);
+}
+
+void SceneManager::handleEventPause(const sf::Event& event)
+{
+	for (auto& button : pauseButtons)
+		button->handleEvent(event);
+}
+
+void SceneManager::handleEventWin(const sf::Event& event)
+{
+	for (auto& button : winButtons)
+		button->handleEvent(event);
+}
+
+void SceneManager::handleEventVictory(const sf::Event& event)
+{
+	for (auto& button : victoryButtons)
+		button->handleEvent(event);
 }
 
 void SceneManager::handleEvent(const sf::Event& event)
@@ -151,13 +210,60 @@ void SceneManager::handleEvent(const sf::Event& event)
 	{
 		case SceneManager::SCENE_BATTLE:
 			handleEventBattle(event);
+			switch (event.type)
+			{
+				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::Space)
+					{
+						setScene(SceneManager::SCENE_PAUSE);
+						SoundManager::PlaySoundEffect(SoundManager::TYPE_BUTTON_PRESSED);
+					}
+					break;
+				default:
+					break;
+			}
 			break;
 		case SceneManager::SCENE_MAIN_MENU:
 			handleEventMainMenu(event);
 			break;
+		case SceneManager::SCENE_HOW_TO_PLAY:
+			handleEventHowToPlay(event);
+			break;
+		case SceneManager::SCENE_PAUSE:
+			switch (event.type)
+			{
+				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::Space)
+					{
+						setScene(SceneManager::SCENE_BATTLE);
+						SoundManager::PlaySoundEffect(SoundManager::TYPE_BUTTON_PRESSED);
+					}
+					if (event.key.code == sf::Keyboard::Escape)
+					{
+						setScene(SceneManager::SCENE_MAIN_MENU);
+						SoundManager::PlaySoundEffect(SoundManager::TYPE_BUTTON_PRESSED);
+					}
+					if (event.key.code == sf::Keyboard::R)
+					{
+						newRound(currMap);
+						SoundManager::PlaySoundEffect(SoundManager::TYPE_BUTTON_PRESSED);
+					}
+					break;
+				default:
+					break;
+			}
+			handleEventPause(event);
+			break;
+		case SceneManager::SCENE_WIN:
+			handleEventWin(event);
+			break;
+		case SceneManager::SCENE_VICTORY:
+			handleEventVictory(event);
+			break;
 		default:
 			break;
 	}
+	handleButtonEvent();
 }
 
 void SceneManager::newRound(int mapNumber)
@@ -185,6 +291,7 @@ void SceneManager::newRound(int mapNumber)
 
 	players[0]->reset(playerOnePos);
 	players[1]->reset(playerTwoPos);
+	currMap = mapNumber;
 }
 
 void SceneManager::renderSceneBuffer()
@@ -194,25 +301,47 @@ void SceneManager::renderSceneBuffer()
 	switch (currScene)
 	{
 		case SceneManager::SCENE_MAIN_MENU:
+			sceneBuffer.clear(sf::Color(94, 196, 183));
+			for (const auto& elem : mainMenuUiElements)
+				elem->draw(sceneBuffer);
+			for (const auto& button : mainMenuButtons)
+				button->draw(sceneBuffer);
 			break;
 		case SceneManager::SCENE_HOW_TO_PLAY:
+			sceneBuffer.clear(sf::Color(94, 196, 183));
+			for (const auto& elem : mainMenuUiElements)
+				elem->draw(sceneBuffer);
+			for (const auto& button : mainMenuButtons)
+				button->draw(sceneBuffer);
+			sceneBuffer.clear(sf::Color(0, 0, 0, 10));
+			for (const auto& elem : howToPlayUiElements)
+				elem->draw(sceneBuffer);
+			for (const auto& button : howToPlayButtons)
+				button->draw(sceneBuffer);
 			break;
 		case SceneManager::SCENE_BATTLE:
 			sceneBuffer.clear(sf::Color(94, 196, 183));
 			map.draw(sceneBuffer);
-			for (const auto& player : players)
-				sceneBuffer.draw(player->sprite);
 			for (const auto& item : items)
-				sceneBuffer.draw(item->sprite);
+				item->draw(sceneBuffer);
+			for (const auto& player : players)
+				player->draw(sceneBuffer);
 			for (const auto& projectile : projectiles)
-				sceneBuffer.draw(projectile->sprite);
-
+				projectile->draw(sceneBuffer);
 			break;
 		case SceneManager::SCENE_WIN:
 			break;
 		case SceneManager::SCENE_VICTORY:
 			break;
 		case SceneManager::SCENE_PAUSE:
+			sceneBuffer.clear(sf::Color(94, 196, 183));
+			map.draw(sceneBuffer);
+			for (const auto& item : items)
+				item->draw(sceneBuffer);
+			for (const auto& player : players)
+				player->draw(sceneBuffer);
+			for (const auto& projectile : projectiles)
+				projectile->draw(sceneBuffer);
 			break;
 		case SceneManager::SCENE_QUIT:
 			break;
@@ -227,20 +356,93 @@ void SceneManager::renderSceneBuffer()
 
 void SceneManager::renderWindow(sf::RenderWindow& window)
 {
-	window.setView(window.getDefaultView());
-	window.clear(sf::Color(31, 30, 28));
 	sf::Sprite sceneSprite = getSceneSprite();
-	window.setView(playerOneView);
-	window.draw(sceneSprite);
-	window.setView(playerTwoView);
-	window.draw(sceneSprite);
-	window.setView(miniMap);
-	window.draw(sceneSprite);
-
-	window.setView(window.getDefaultView());
 	if (currScene == SceneManager::SCENE_BATTLE)
-		for (const auto& uiElement : uiElements)
-			uiElement->draw(window);
+	{
+		window.setView(window.getDefaultView());
+		window.clear(sf::Color(31, 30, 28));
+		window.setView(playerOneView);
+		window.draw(sceneSprite);
+		window.setView(playerTwoView);
+		window.draw(sceneSprite);
+		window.setView(miniMap);
+		window.draw(sceneSprite);
+
+		window.setView(window.getDefaultView());
+		for (const auto& battleUiElement : battleUiElements)
+			battleUiElement->draw(window);
+	}
+	else if (currScene == SceneManager::SCENE_MAIN_MENU)
+	{
+		window.setView(window.getDefaultView());
+		window.draw(sceneSprite);
+	}
+	else if (currScene == SceneManager::SCENE_HOW_TO_PLAY)
+	{
+		window.setView(window.getDefaultView());
+		window.draw(sceneSprite);
+	}
+	else if (currScene == SceneManager::SCENE_PAUSE)
+	{
+		window.setView(window.getDefaultView());
+		window.clear(sf::Color(31, 30, 28));
+		window.setView(playerOneView);
+		window.draw(sceneSprite);
+		window.setView(playerTwoView);
+		window.draw(sceneSprite);
+		window.setView(miniMap);
+		window.draw(sceneSprite);
+
+		window.setView(window.getDefaultView());
+		for (const auto& battleUiElement : battleUiElements)
+			battleUiElement->draw(window);
+		window.clear(sf::Color(0, 0, 0, 0));
+		for (const auto& button : pauseButtons)
+			button->draw(window);
+	}
+	else if (currScene == SceneManager::SCENE_WIN)
+	{
+		window.setView(window.getDefaultView());
+		window.clear(sf::Color(31, 30, 28));
+		window.setView(playerOneView);
+		window.draw(sceneSprite);
+		window.setView(playerTwoView);
+		window.draw(sceneSprite);
+		window.setView(miniMap);
+		window.draw(sceneSprite);
+
+		window.setView(window.getDefaultView());
+		for (const auto& battleUiElement : battleUiElements)
+			battleUiElement->draw(window);
+
+		window.clear(sf::Color(0, 0, 0, 2));
+		winUiElements[winnerOfTheRound]->draw(window);
+		for (const auto& button : winButtons)
+			button->draw(window);
+		winUiElements[2]->draw(window);
+	}
+	else if (currScene == SceneManager::SCENE_VICTORY)
+	{
+		window.setView(window.getDefaultView());
+		window.clear(sf::Color(31, 30, 28));
+		window.setView(playerOneView);
+		window.draw(sceneSprite);
+		window.setView(playerTwoView);
+		window.draw(sceneSprite);
+		window.setView(miniMap);
+		window.draw(sceneSprite);
+
+		window.setView(window.getDefaultView());
+		for (const auto& battleUiElement : battleUiElements)
+			battleUiElement->draw(window);
+
+		window.clear(sf::Color(0, 0, 0, 2));
+		victoryUiElements[winnerOfTheRound]->draw(window);
+		for (const auto& button : victoryButtons)
+			button->draw(window);
+		victoryUiElements[2]->draw(window);
+
+	}
 	// draw UI elements
 }
 

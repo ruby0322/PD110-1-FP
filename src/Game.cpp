@@ -6,7 +6,6 @@ Game::Game()
 
 Game::~Game()
 {
-
 }
 
 void Game::render()
@@ -31,7 +30,6 @@ void Game::init(float windowWidth = 400.f,
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 	sceneManager.init(windowWidth, windowHeight);
 
-
 	sf::Vector2f border(window.getSize().x, window.getSize().y);
 
 	Player* player1 = new Player(border, 1, &sceneManager.projectiles);
@@ -52,35 +50,72 @@ void Game::init(float windowWidth = 400.f,
 	UIElement* playerTwoSpeedBoosted = new UIElement(UIElement::TYPE_PLAYER_TWO_SPEED_BOOSTED, player2);
 	UIElement* playerOneBulletBoosted = new UIElement(UIElement::TYPE_PLAYER_ONE_BULLET_BOOSTED, player1);
 	UIElement* playerTwoBulletBoosted = new UIElement(UIElement::TYPE_PLAYER_TWO_BULLET_BOOSTED, player2);
+	UIElement* mainMenuBg = new UIElement(UIElement::TYPE_MAIN_MENU_BG, player1);
+	UIElement* blueBodyCover = new UIElement(UIElement::TYPE_BLUE_BODY_COVER, player1);
+	UIElement* redBodyCover = new UIElement(UIElement::TYPE_RED_BODY_COVER, player2);
+	UIElement* blueBarrelCover = new UIElement(UIElement::TYPE_BLUE_BARREL_COVER, player1);
+	UIElement* redBarrelCover = new UIElement(UIElement::TYPE_RED_BARREL_COVER, player2);
+	UIElement* mainMenuTitle = new UIElement(UIElement::TYPE_MAIN_MENU_TITLE, player1);
+	UIElement* howToPlayInstructions = new UIElement(UIElement::TYPE_HOW_TO_PLAY_INSTRUCTIONS, nullptr);
+	UIElement* winPlayerOnePhoto = new UIElement(UIElement::TYPE_WIN_PLAYER_ONE_PHOTO, nullptr);
+	UIElement* winPlayerTwoPhoto = new UIElement(UIElement::TYPE_WIN_PLAYER_TWO_PHOTO, nullptr);
+	UIElement* winText = new UIElement(UIElement::TYPE_WIN_TEXT, nullptr);
+	UIElement* victoryText = new UIElement(UIElement::TYPE_VICTORY_TEXT, nullptr);
 
-	sceneManager.uiElements.push_back(playerOnePhoto);
-	sceneManager.uiElements.push_back(playerTwoPhoto);
-	sceneManager.uiElements.push_back(playerOneHealthBar);
-	sceneManager.uiElements.push_back(playerTwoHealthBar);
-	sceneManager.uiElements.push_back(playerOneHealthBarBg);
-	sceneManager.uiElements.push_back(playerTwoHealthBarBg);
-	sceneManager.uiElements.push_back(playerOneHealing);
-	sceneManager.uiElements.push_back(playerTwoHealing);
-	sceneManager.uiElements.push_back(playerOneSpeedBoosted);
-	sceneManager.uiElements.push_back(playerTwoSpeedBoosted);
-	sceneManager.uiElements.push_back(playerOneBulletBoosted);
-	sceneManager.uiElements.push_back(playerTwoBulletBoosted);
+	Button* mainMenuPlayButton = new Button(Button::TYPE_PLAY, &sceneManager.getScene(), &sceneManager.buttonEvent, sf::Vector2f(480.f, 710.f));
+	Button* mainMenuInfoButton = new Button(Button::TYPE_INFO, &sceneManager.getScene(), nullptr, sf::Vector2f(480.f, 850.f));
+	Button* howToPlayCrossButton = new Button(Button::TYPE_HOW_TO_PLAY_BACK, &sceneManager.getScene(), nullptr, sf::Vector2f(800.f, 100.f));
 
-	// Item* newItem = new Item(0, sf::Vector2f(100.f, 100.f), &sceneManager.players);
-	// sceneManager.items.push_back(newItem);
-	sf::Texture tex;
-	std::vector<sf::Texture> playButtonFrames;
-	tex.loadFromFile("content/Image/Scene/MainMenu/PlayButton/Play_Pressed.png");
-	playButtonFrames.push_back(tex);
-	tex.loadFromFile("content/Image/Scene/MainMenu/PlayButton/Play_Unpressed.png");
-	playButtonFrames.push_back(tex);
-	// Button* playButton = new Button(playButtonFrames, Button::TYPE_PLAY, this);
+	Button* pauseBackButton = new Button(Button::TYPE_PAUSE_BACK, &sceneManager.getScene(), nullptr, sf::Vector2f(200.f, 480.f));
+	Button* pauseButton = new Button(Button::TYPE_PAUSE, &sceneManager.getScene(), nullptr, sf::Vector2f(480.f, 480.f));
+	Button* pauseResetButton = new Button(Button::TYPE_PAUSE_RESET, &sceneManager.getScene(), &sceneManager.buttonEvent, sf::Vector2f(760.f, 480.f));
+
+	Button* winPlayButton = new Button(Button::TYPE_PLAY, &sceneManager.getScene(), &sceneManager.buttonEvent, sf::Vector2f(480.f, 850.f));
+
+	Button* victoryResetButton = new Button(Button::TYPE_VICTORY_RESET, &sceneManager.getScene(), &sceneManager.buttonEvent, sf::Vector2f(480.f, 850.f));
+
+	sceneManager.battleUiElements.push_back(playerOnePhoto);
+	sceneManager.battleUiElements.push_back(playerTwoPhoto);
+	sceneManager.battleUiElements.push_back(playerOneHealthBar);
+	sceneManager.battleUiElements.push_back(playerTwoHealthBar);
+	sceneManager.battleUiElements.push_back(playerOneHealthBarBg);
+	sceneManager.battleUiElements.push_back(playerTwoHealthBarBg);
+	sceneManager.battleUiElements.push_back(playerOneHealing);
+	sceneManager.battleUiElements.push_back(playerTwoHealing);
+	sceneManager.battleUiElements.push_back(playerOneSpeedBoosted);
+	sceneManager.battleUiElements.push_back(playerTwoSpeedBoosted);
+	sceneManager.battleUiElements.push_back(playerOneBulletBoosted);
+	sceneManager.battleUiElements.push_back(playerTwoBulletBoosted);
+
+	sceneManager.mainMenuUiElements.push_back(mainMenuBg);
+	sceneManager.mainMenuUiElements.push_back(blueBarrelCover);
+	sceneManager.mainMenuUiElements.push_back(redBarrelCover);
+	sceneManager.mainMenuUiElements.push_back(blueBodyCover);
+	sceneManager.mainMenuUiElements.push_back(redBodyCover);
+	sceneManager.mainMenuUiElements.push_back(mainMenuTitle);
+	sceneManager.mainMenuButtons.push_back(mainMenuPlayButton);
+	sceneManager.mainMenuButtons.push_back(mainMenuInfoButton);
+
+	sceneManager.howToPlayUiElements.push_back(howToPlayInstructions);
+	sceneManager.howToPlayButtons.push_back(howToPlayCrossButton);
+
+	sceneManager.pauseButtons.push_back(pauseButton);
+	sceneManager.pauseButtons.push_back(pauseBackButton);
+	sceneManager.pauseButtons.push_back(pauseResetButton);
+
+	sceneManager.winUiElements.push_back(winPlayerOnePhoto);
+	sceneManager.winUiElements.push_back(winPlayerTwoPhoto);
+	sceneManager.winUiElements.push_back(winText);
+	sceneManager.winButtons.push_back(winPlayButton);
+
+	sceneManager.victoryUiElements.push_back(winPlayerOnePhoto);
+	sceneManager.victoryUiElements.push_back(winPlayerTwoPhoto);
+	sceneManager.victoryUiElements.push_back(victoryText);
+	sceneManager.victoryButtons.push_back(victoryResetButton);
 
 	sceneManager.newRound(1);
 	sceneManager.newRound(1);
 }
-
-
 
 void Game::__debug(const sf::Event& event)
 {

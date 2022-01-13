@@ -1,11 +1,9 @@
-#include "Platform/Platform.hpp"
 #include "Player.hpp"
-#include "Entity.hpp"
 #include "Item.hpp"
 #include "Projectile.hpp"
-#include "Map.hpp"
 #include "MapManager.hpp"
 #include "UIElement.hpp"
+#include "Button.hpp"
 
 #ifndef SCENEMANAGER_HPP
 #define SCENEMANAGER_HPP
@@ -20,16 +18,25 @@ private:
 	sf::View playerTwoView;
 	sf::View miniMap;
 
+	int winnerOfTheRound;
+
+	int currMap;
+
 	void renderSceneBuffer();
 	void updateBattle(float deltaTime);
 	void updateMainMenu(float deltaTime);
 	void handleEventBattle(const sf::Event& event);
 	void handleEventMainMenu(const sf::Event& event);
+	void handleEventHowToPlay(const sf::Event& event);
+	void handleEventPause(const sf::Event& event);
+	void handleEventWin(const sf::Event& event);
+	void handleEventVictory(const sf::Event& event);
+
+	void handleButtonEvent();
 	void clearDeadProjectiles();
 	void clearDeadItems();
 	sf::Vector2f fixCameraCenter(const sf::Vector2f& pos);
 	void updateCameras();
-
 
 public:
 
@@ -43,14 +50,25 @@ public:
 	static const int SCENE_QUIT = 7;
 	static const int SCENE_END = 8;
 
-	std::vector<Entity*> mainMenuEntities;
+	int buttonEvent;
 
 	std::vector<Player*> players;
 	std::vector<Entity*> entities;
 	std::vector<Item*> items;
 	std::vector<Projectile*> projectiles;
 	std::vector<sf::Text*> texts;
-	std::vector<UIElement*> uiElements;
+
+	std::vector<UIElement*> battleUiElements;
+	std::vector<UIElement*> mainMenuUiElements;
+	std::vector<UIElement*> howToPlayUiElements;
+	std::vector<UIElement*> winUiElements;
+	std::vector<UIElement*> victoryUiElements;
+
+	std::vector<Button*> mainMenuButtons;
+	std::vector<Button*> howToPlayButtons;
+	std::vector<Button*> pauseButtons;
+	std::vector<Button*> winButtons;
+	std::vector<Button*> victoryButtons;
 
 	Map map;
 
@@ -62,7 +80,7 @@ public:
 	void newRound(int mapNumber);
 	void update(float deltaTime);
 	void setScene(int newScene);
-	int getScene() const;
+	int& getScene();
 	void renderWindow(sf::RenderWindow& window);
 	sf::Sprite getSceneSprite();
 

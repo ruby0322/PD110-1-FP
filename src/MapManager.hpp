@@ -1,6 +1,5 @@
 #include "Map.hpp"
 #include <fstream>
-#include <string>
 
 #ifndef MAPMANAGER_HPP
 #define MAPMANAGER_HPP

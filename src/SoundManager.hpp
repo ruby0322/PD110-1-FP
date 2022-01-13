@@ -23,6 +23,9 @@ private:
 	static sf::SoundBuffer SOUND_TANK_ONE_DRIVING;
 	static sf::SoundBuffer SOUND_TANK_TWO_DRIVING;
 	static sf::SoundBuffer SOUND_ITEM_PICKED;
+	static sf::SoundBuffer SOUND_BUTTON_PRESSED;
+	static sf::SoundBuffer SOUND_WIN;
+	static sf::SoundBuffer SOUND_VICTORY;
 
 	static std::vector<sf::Sound> sounds;
 	static sf::Sound introMusic;
@@ -43,6 +46,9 @@ public:
 	static const int TYPE_TANK_ONE_DRIVING = 3;
 	static const int TYPE_TANK_TWO_DRIVING = 4;
 	static const int TYPE_ITEM_PICKED = 5;
+	static const int TYPE_BUTTON_PRESSED = 6;
+	static const int TYPE_WIN = 7;
+	static const int TYPE_VICTORY = 8;
 
 	static void Init();
 

@@ -26,6 +26,9 @@ public:
 	void heal(float amount);
 	int getNumber() const;
 	float getHp() const;
+	void win();
+	bool isVictorious() const;
+	void newGame();
 
 	void handleEvent(const sf::Event& event) override;
 	void update(float deltaTime) override;
@@ -36,6 +39,7 @@ private:
 
 	float hp;
 	int number;
+	int point;
 
 	sf::Vector2f border;
 

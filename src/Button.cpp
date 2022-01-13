@@ -1,11 +1,80 @@
 #include "Button.hpp"
 
-Button::Button(const std::vector<sf::Texture>& frames, int type, SceneManager* target) :
-	Entity(frames),
-	target(target)
+Button::Button(int type, int* target, int* event, const sf::Vector2f& pos) :
+	Entity(),
+	target(target),
+	event(event)
 {
 	this->clicked = false;
 	this->type = type;
+	sf::Texture tex;
+	sprite.setPosition(pos);
+	switch (type)
+	{
+		case Button::TYPE_PLAY:
+			tex.loadFromFile("content/Image/UI/MainMenu/PlayButton/Play_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/MainMenu/PlayButton/Play_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+		case Button::TYPE_INFO:
+			tex.loadFromFile("content/Image/UI/MainMenu/InfoButton/Info_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/MainMenu/InfoButton/Info_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
+		case Button::TYPE_HOW_TO_PLAY_BACK:
+			tex.loadFromFile("content/Image/UI/HowToPlay/CrossButton/Cross_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/HowToPlay/CrossButton/Cross_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
+		case Button::TYPE_PAUSE:
+			tex.loadFromFile("content/Image/UI/Pause/PauseButton/Pause_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/Pause/PauseButton/Pause_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
+		case Button::TYPE_PAUSE_BACK:
+			tex.loadFromFile("content/Image/UI/Pause/CrossButton/Cross_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/Pause/CrossButton/Cross_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
+		case Button::TYPE_PAUSE_RESET:
+			tex.loadFromFile("content/Image/UI/Pause/BackwardButton/Backward_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/Pause/BackwardButton/Backward_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+		case Button::TYPE_VICTORY_RESET:
+			tex.loadFromFile("content/Image/UI/Victory/BackwardButton/Backward_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/Victory/BackwardButton/Backward_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+		default:
+			break;
+	}
+	resetCenter();
 }
 
 Button::~Button()
@@ -18,49 +87,64 @@ bool Button::isPointInside(const sf::Vector2f& pos) const
 	return sprite.getGlobalBounds().contains(pos);
 }
 
-void Button::trigger() {
-	switch (type) {
+void Button::trigger()
+{
+	switch (type)
+	{
 		case Button::TYPE_PLAY:
-		target->setScene(SceneManager::SCENE_BATTLE);
-		break;
-		case Button::TYPE_PAUSE:
-		target->setScene(SceneManager::SCENE_PAUSE);
-		break;
+			*event = Button::EVENT_NEW_ROUND;
+			break;
 		case Button::TYPE_INFO:
-		target->setScene(SceneManager::SCENE_HOW_TO_PLAY);
-		break;
+			*target = 1;
+			break;
 		case Button::TYPE_QUIT:
-		target->setScene(SceneManager::SCENE_QUIT);
-		break;
+			*target = 1;
+			break;
 		case Button::TYPE_MAIN_MENU:
-		target->setScene(SceneManager::SCENE_MAIN_MENU);
-		break;
+			*target = 1;
+			break;
+		case Button::TYPE_HOW_TO_PLAY_BACK:
+			*target = 0;
+			break;
+		case Button::TYPE_PAUSE:
+			*target = 3;
+			break;
+		case Button::TYPE_PAUSE_BACK:
+			*target = 0;
+			break;
+		case Button::TYPE_PAUSE_RESET:
+			*event = Button::EVENT_NEW_ROUND;
+			break;
+		case Button::TYPE_VICTORY_RESET:
+			*event = Button::EVENT_NEW_GAME;
+			break;
 		default:
-		break;
+			break;
 	}
 }
 
-void Button::handleEvent(const sf::Event& event) {
+void Button::handleEvent(const sf::Event& event)
+{
 	switch (event.type)
 	{
 		case sf::Event::MouseButtonPressed:
-			if (event.mouseButton.button == sf::Mouse::Left) {
+			if (event.mouseButton.button == sf::Mouse::Left)
 				if (isPointInside(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
 				{
 					clicked = true;
 					setFrame(1);
 				}
-			}
 			break;
 		case sf::Event::MouseButtonReleased:
-			if (event.mouseButton.button == sf::Mouse::Left) {
+			if (event.mouseButton.button == sf::Mouse::Left)
+			{
+				setFrame(0);
 				if (isPointInside(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
-				{
-					if (clicked) {
+					if (clicked)
+					{
 						trigger();
-						setFrame(0);
+						SoundManager::PlaySoundEffect(SoundManager::TYPE_BUTTON_PRESSED);
 					}
-				}
 				clicked = false;
 			}
 			break;

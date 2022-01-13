@@ -1,4 +1,3 @@
-#include "Platform/Platform.hpp"
 #include "Tile.hpp"
 #include "Lava.hpp"
 #include "Player.hpp"

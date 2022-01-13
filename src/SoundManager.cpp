@@ -19,6 +19,9 @@ sf::SoundBuffer SoundManager::SOUND_BOX_DESTROYED;
 sf::SoundBuffer SoundManager::SOUND_TANK_ONE_DRIVING;
 sf::SoundBuffer SoundManager::SOUND_TANK_TWO_DRIVING;
 sf::SoundBuffer SoundManager::SOUND_ITEM_PICKED;
+sf::SoundBuffer SoundManager::SOUND_BUTTON_PRESSED;
+sf::SoundBuffer SoundManager::SOUND_WIN;
+sf::SoundBuffer SoundManager::SOUND_VICTORY;
 
 SoundManager::SoundManager()
 {
@@ -38,6 +41,9 @@ void SoundManager::Init()
 	SOUND_TANK_ONE_DRIVING.loadFromFile("content/Audio/tankDriving.wav");
 	SOUND_TANK_TWO_DRIVING.loadFromFile("content/Audio/tankDriving.wav");
 	SOUND_ITEM_PICKED.loadFromFile("content/Audio/itemPicked.wav");
+	SOUND_BUTTON_PRESSED.loadFromFile("content/Audio/buttonPressed.wav");
+	SOUND_WIN.loadFromFile("content/Audio/win.wav");
+	SOUND_VICTORY.loadFromFile("content/Audio/victory.wav");
 
 	introMusic.setBuffer(MUSIC_INTRO);
 	battleMusic.setBuffer(MUSIC_BATTLE);
@@ -65,6 +71,12 @@ sf::SoundBuffer* SoundManager::GetBufferPtr(int type)
 			return &SoundManager::SOUND_TANK_TWO_DRIVING;
 		case SoundManager::TYPE_ITEM_PICKED:
 			return &SoundManager::SOUND_ITEM_PICKED;
+		case SoundManager::TYPE_BUTTON_PRESSED:
+			return &SoundManager::SOUND_BUTTON_PRESSED;
+		case SoundManager::TYPE_WIN:
+			return &SoundManager::SOUND_WIN;
+		case SoundManager::TYPE_VICTORY:
+			return &SoundManager::SOUND_VICTORY;
 		default:
 			return nullptr;
 	}
@@ -114,7 +126,7 @@ void SoundManager::ToggleBattleMusic()
 void SoundManager::PlaySoundEffect(int type)
 {
 	CheckInitialization();
-	if (0 <= type && type <= 5)
+	if (0 <= type && type <= 8)
 	{
 		sf::Sound sound;
 		sound.setBuffer(*SoundManager::GetBufferPtr(type));

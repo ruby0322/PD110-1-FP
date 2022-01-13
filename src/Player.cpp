@@ -1,21 +1,22 @@
 #include "Player.hpp"
 
 const float Player::DEFAULT_VELOCITY = .5f;
-const float Player::DEFAULT_DAMAGE = 8.f;
+const float Player::DEFAULT_DAMAGE = 20.f;
 const float Player::MAX_HP = 100.f;
 const float Player::DRIVING_SOUND_INTERVAL = 1.f;
 const float Player::OMEGA = 2.5f;
 
 Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>* projectiles) :
 	Entity(),
-	hp(Player::MAX_HP)
+	hp(Player::MAX_HP),
+	point(0)
 {
 	this->projectiles = projectiles;
 	direction = 0.f;
 	drivingSoundTimer = 0.f;
 	this->border = border;
 	this->number = number;
-	sprite.scale(.06f, .06f);
+	sprite.scale(.052f, .052f);
 	sf::Texture tex;
 	if (number == 1)
 		tex.loadFromFile("content/Image/Tank/blue_tank_small.png");
@@ -175,7 +176,8 @@ void Player::dealDamage(float damage)
 void Player::heal(float amount)
 {
 	hp += amount;
-	if (hp > 100.f) hp = 100.f;
+	if (hp > 100.f)
+		hp = 100.f;
 	std::cout << "[Player" << number << "] Healed " << amount << " hp, currently " << hp << std::endl;
 }
 
@@ -184,10 +186,22 @@ float Player::getHp() const
 	return hp;
 }
 
+void Player::win()
+{
+	++point;
+}
+
+bool Player::isVictorious() const
+{
+	return point >= 3;
+}
+
 void Player::reset(const sf::Vector2f& newPos)
 {
 	hp = Player::MAX_HP;
+	revive();
 	direction = 0.f;
+	status.reset();
 	sprite.setRotation(direction);
 	sprite.setPosition(newPos);
 }
@@ -195,4 +209,10 @@ void Player::reset(const sf::Vector2f& newPos)
 int Player::getNumber() const
 {
 	return number;
+}
+
+void Player::newGame()
+{
+	reset(sf::Vector2f(0.f, 0.f));
+	point = 0;
 }

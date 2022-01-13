@@ -1,12 +1,9 @@
 #include "Box.hpp"
 #include "Button.hpp"
-#include "Entity.hpp"
 #include "Map.hpp"
-#include "Platform/Platform.hpp"
 #include "Player.hpp"
 #include "SceneManager.hpp"
 #include "SoundManager.hpp"
-#include "uiElement.hpp"
 
 #ifndef GAME_HPP
 	#define GAME_HPP

@@ -1,5 +1,4 @@
 #include "Collider.hpp"
-#include "Platform/Platform.hpp"
 
 #ifndef ENTITY_HPP
 	#define ENTITY_HPP
@@ -31,6 +30,9 @@ public:
 	void updateFrame();
 	void updateMovement();
 	void kill();
+	void revive();
+	void draw(sf::RenderTexture& buffer) const;
+	void draw(sf::RenderWindow& window) const;
 	bool isDead() const;
 	void resetCenter();
 

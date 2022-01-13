@@ -12,10 +12,10 @@ Projectile::Projectile(int type, float damage, const sf::Vector2f& pos, float di
 	switch (type)
 	{
 		case Projectile::TYPE_BLUE_BULLET:
-			tex.loadFromFile("content/Image/Projectile/BlueBullet/bullet_blue.png");
+			tex.loadFromFile("content/Image/Projectile/BlueBullet/bullet_blue_rrro.png");
 			break;
 		case Projectile::TYPE_RED_BULLET:
-			tex.loadFromFile("content/Image/Projectile/RedBullet/bullet_red.png");
+			tex.loadFromFile("content/Image/Projectile/RedBullet/bullet_red_rrro.png");
 			break;
 		default:
 			break;
