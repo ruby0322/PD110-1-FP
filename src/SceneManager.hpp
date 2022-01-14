@@ -20,17 +20,39 @@ private:
 
 	int winnerOfTheRound;
 
-	int currMap;
+	std::vector<Player*> players;
+	std::vector<Item*> items;
+	std::vector<Projectile*> projectiles;
+
+	std::vector<UIElement*> battleUiElements;
+	std::vector<UIElement*> mainMenuUiElements;
+	std::vector<UIElement*> howToPlayUiElements;
+	std::vector<UIElement*> pauseUiElements;
+	std::vector<UIElement*> winUiElements;
+	std::vector<UIElement*> victoryUiElements;
+	std::vector<UIElement*> chooseMapUiElements;
+	std::vector<UIElement*> miniMapUiElements;
+
+	std::vector<Button*> mainMenuButtons;
+	std::vector<Button*> howToPlayButtons;
+	std::vector<Button*> pauseButtons;
+	std::vector<Button*> winButtons;
+	std::vector<Button*> victoryButtons;
+	std::vector<Button*> chooseMapButtons;
+
+	Map map;
 
 	void renderSceneBuffer();
 	void updateBattle(float deltaTime);
 	void updateMainMenu(float deltaTime);
+	void updateChooseMap(float deltaTime);
 	void handleEventBattle(const sf::Event& event);
 	void handleEventMainMenu(const sf::Event& event);
 	void handleEventHowToPlay(const sf::Event& event);
 	void handleEventPause(const sf::Event& event);
 	void handleEventWin(const sf::Event& event);
 	void handleEventVictory(const sf::Event& event);
+	void handleEventChooseMap(const sf::Event& event);
 
 	void handleButtonEvent();
 	void clearDeadProjectiles();
@@ -40,6 +62,7 @@ private:
 
 	void clearItems();
 	void clearProjectiles();
+	void clearPlayers();
 
 public:
 
@@ -53,27 +76,9 @@ public:
 	static const int SCENE_QUIT = 7;
 	static const int SCENE_END = 8;
 
+	int currMap;
 	int buttonEvent;
 
-	std::vector<Player*> players;
-	std::vector<Entity*> entities;
-	std::vector<Item*> items;
-	std::vector<Projectile*> projectiles;
-	std::vector<sf::Text*> texts;
-
-	std::vector<UIElement*> battleUiElements;
-	std::vector<UIElement*> mainMenuUiElements;
-	std::vector<UIElement*> howToPlayUiElements;
-	std::vector<UIElement*> winUiElements;
-	std::vector<UIElement*> victoryUiElements;
-
-	std::vector<Button*> mainMenuButtons;
-	std::vector<Button*> howToPlayButtons;
-	std::vector<Button*> pauseButtons;
-	std::vector<Button*> winButtons;
-	std::vector<Button*> victoryButtons;
-
-	Map map;
 
 	SceneManager();
 	~SceneManager();

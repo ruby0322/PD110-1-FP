@@ -15,6 +15,7 @@ public:
 	static const float OMEGA;
 	static const float DRIVING_SOUND_INTERVAL;
 	static const float MAX_HP;
+	static const float HEAL_AMOUT;
 
 	Status status;
 
@@ -26,6 +27,8 @@ public:
 	void heal(float amount);
 	int getNumber() const;
 	float getHp() const;
+	int getPoint() const;
+	float getDirection() const;
 	void win();
 	bool isVictorious() const;
 	void newGame();

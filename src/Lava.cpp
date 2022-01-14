@@ -37,11 +37,13 @@ void Lava::update(float deltaTime)
 	{
 		timer1 -= Lava::DAMAGE_INTERVAL;
 		(*players)[0]->dealDamage(Lava::DAMAGE);
+		SoundManager::PlaySoundEffect(SoundManager::TYPE_LAVA_TOUCHED);
 	}
 	if (timer2 > Lava::DAMAGE_INTERVAL)
 	{
 		timer2 -= Lava::DAMAGE_INTERVAL;
 		(*players)[1]->dealDamage(Lava::DAMAGE);
+		SoundManager::PlaySoundEffect(SoundManager::TYPE_LAVA_TOUCHED);
 	}
 	for (auto& box : *boxes)
 	{

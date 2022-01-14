@@ -8,7 +8,6 @@ class Button : public Entity
 {
 private:
 	static const int BUTTON_HEIGHT = 120;
-	int* target;
 	int* event;
 
 	int type;
@@ -26,12 +25,22 @@ public:
 	static const int TYPE_PAUSE_BACK = 7;
 	static const int TYPE_PAUSE_RESET = 8;
 	static const int TYPE_VICTORY_RESET = 9;
+	static const int TYPE_CHOOSE_MAP_NEXT = 10;
+	static const int TYPE_CHOOSE_MAP_PREV = 11;
+	static const int TYPE_CHOOSE_MAP_PLAY = 12;
 
 	static const int EVENT_NONE = 0;
 	static const int EVENT_NEW_ROUND = 1;
 	static const int EVENT_NEW_GAME = 2;
+	static const int EVENT_NEXT_MAP = 3;
+	static const int EVENT_PREV_MAP = 4;
+	static const int EVENT_HOW_TO_PLAY = 5;
+	static const int EVENT_MAIN_MENU = 6;
+	static const int EVENT_PAUSE_RESUME = 7;
+	static const int EVENT_BATTLE = 8;
+	static const int EVENT_CHOOSE_MAP = 9;
 
-	Button(int type, int* target, int* event, const sf::Vector2f& pos);
+	Button(int type, int* event, const sf::Vector2f& pos);
 	~Button();
 	void handleEvent(const sf::Event& event) override;
 	void update(float deltaTime) override;

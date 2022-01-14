@@ -4,7 +4,8 @@ const float Player::DEFAULT_VELOCITY = .5f;
 const float Player::DEFAULT_DAMAGE = 20.f;
 const float Player::MAX_HP = 100.f;
 const float Player::DRIVING_SOUND_INTERVAL = 1.f;
-const float Player::OMEGA = 5.f;
+const float Player::OMEGA = 3.f;
+const float Player::HEAL_AMOUT = .032f;
 
 Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>* projectiles) :
 	Entity(),
@@ -16,16 +17,18 @@ Player::Player(const sf::Vector2f& border, int number, std::vector<Projectile*>*
 	drivingSoundTimer = 0.f;
 	this->border = border;
 	this->number = number;
-	if (number == 2)
-		sprite.scale(.052f, .052f);
-	else
-		sprite.scale(.05f, .05f);
-
 	sf::Texture tex;
 	if (number == 1)
+	{
+		sprite.scale(.05f, .05f);
 		tex.loadFromFile("content/Image/Tank/blue_tank_small.png");
+	}
 	else
+	{
+		sprite.scale(.052f, .052f);
 		tex.loadFromFile("content/Image/Tank/red_tank_small.png");
+	}
+
 	frames.push_back(tex);
 	sprite.setTexture(tex);
 	resetCenter();
@@ -165,7 +168,7 @@ void Player::update(float deltaTime)
 	updateTimer += deltaTime;
 	drivingSoundTimer += deltaTime;
 	if (status.isHealing())
-		heal(.03f);
+		heal(Player::HEAL_AMOUT);
 }
 
 void Player::dealDamage(float damage)
@@ -173,8 +176,6 @@ void Player::dealDamage(float damage)
 	hp -= damage;
 	if (hp <= 0)
 		kill();
-	// std::cout << "[Player" << number << "] "
-	// 		  << "a damage of 5 was dealt, " << hp << " left." << std::endl;
 }
 
 void Player::heal(float amount)
@@ -182,12 +183,16 @@ void Player::heal(float amount)
 	hp += amount;
 	if (hp > 100.f)
 		hp = 100.f;
-	std::cout << "[Player" << number << "] Healed " << amount << " hp, currently " << hp << std::endl;
 }
 
 float Player::getHp() const
 {
 	return hp;
+}
+
+int Player::getPoint() const
+{
+	return point;
 }
 
 void Player::win()
@@ -204,6 +209,7 @@ void Player::reset(const sf::Vector2f& newPos)
 {
 	hp = Player::MAX_HP;
 	revive();
+	vx = vy = 0;
 	direction = 0.f;
 	status.reset();
 	sprite.setRotation(direction);
@@ -219,4 +225,9 @@ void Player::newGame()
 {
 	reset(sf::Vector2f(0.f, 0.f));
 	point = 0;
+}
+
+float Player::getDirection() const
+{
+	return direction;
 }

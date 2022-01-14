@@ -1,8 +1,7 @@
 #include "Button.hpp"
 
-Button::Button(int type, int* target, int* event, const sf::Vector2f& pos) :
+Button::Button(int type, int* event, const sf::Vector2f& pos) :
 	Entity(),
-	target(target),
 	event(event)
 {
 	this->clicked = false;
@@ -12,6 +11,7 @@ Button::Button(int type, int* target, int* event, const sf::Vector2f& pos) :
 	switch (type)
 	{
 		case Button::TYPE_PLAY:
+		case Button::TYPE_CHOOSE_MAP_PLAY:
 			tex.loadFromFile("content/Image/UI/MainMenu/PlayButton/Play_Unpressed.png");
 			frames.push_back(tex);
 			tex.loadFromFile("content/Image/UI/MainMenu/PlayButton/Play_Pressed.png");
@@ -71,6 +71,25 @@ Button::Button(int type, int* target, int* event, const sf::Vector2f& pos) :
 			sprite.setTexture(frames[0]);
 			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
 			break;
+
+		case Button::TYPE_CHOOSE_MAP_NEXT:
+			tex.loadFromFile("content/Image/UI/ChooseMap/ForwardButton/Forward_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/ChooseMap/ForwardButton/Forward_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
+		case Button::TYPE_CHOOSE_MAP_PREV:
+			tex.loadFromFile("content/Image/UI/Victory/BackwardButton/Backward_Unpressed.png");
+			frames.push_back(tex);
+			tex.loadFromFile("content/Image/UI/Victory/BackwardButton/Backward_Pressed.png");
+			frames.push_back(tex);
+			sprite.setTexture(frames[0]);
+			sprite.scale(Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y, Button::BUTTON_HEIGHT / (float)sprite.getTexture()->getSize().y);
+			break;
+
 		default:
 			break;
 	}
@@ -92,31 +111,37 @@ void Button::trigger()
 	switch (type)
 	{
 		case Button::TYPE_PLAY:
+			*event = Button::EVENT_CHOOSE_MAP;
+			break;
+		case Button::TYPE_CHOOSE_MAP_PLAY:
 			*event = Button::EVENT_NEW_ROUND;
 			break;
 		case Button::TYPE_INFO:
-			*target = 1;
-			break;
-		case Button::TYPE_QUIT:
-			*target = 1;
+			*event = Button::EVENT_HOW_TO_PLAY;
 			break;
 		case Button::TYPE_MAIN_MENU:
-			*target = 1;
+			*event = Button::EVENT_MAIN_MENU;
 			break;
 		case Button::TYPE_HOW_TO_PLAY_BACK:
-			*target = 0;
+			*event = Button::EVENT_MAIN_MENU;
 			break;
 		case Button::TYPE_PAUSE:
-			*target = 3;
+			*event = Button::EVENT_PAUSE_RESUME;
 			break;
 		case Button::TYPE_PAUSE_BACK:
-			*target = 0;
+			*event = Button::EVENT_NEW_GAME;
 			break;
 		case Button::TYPE_PAUSE_RESET:
 			*event = Button::EVENT_NEW_ROUND;
 			break;
 		case Button::TYPE_VICTORY_RESET:
 			*event = Button::EVENT_NEW_GAME;
+			break;
+		case Button::TYPE_CHOOSE_MAP_NEXT:
+			*event = Button::EVENT_NEXT_MAP;
+			break;
+		case Button::TYPE_CHOOSE_MAP_PREV:
+			*event = Button::EVENT_PREV_MAP;
 			break;
 		default:
 			break;

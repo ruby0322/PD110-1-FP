@@ -22,6 +22,7 @@ sf::SoundBuffer SoundManager::SOUND_ITEM_PICKED;
 sf::SoundBuffer SoundManager::SOUND_BUTTON_PRESSED;
 sf::SoundBuffer SoundManager::SOUND_WIN;
 sf::SoundBuffer SoundManager::SOUND_VICTORY;
+sf::SoundBuffer SoundManager::SOUND_LAVA_TOUCHED;
 
 SoundManager::SoundManager()
 {
@@ -44,6 +45,7 @@ void SoundManager::Init()
 	SOUND_BUTTON_PRESSED.loadFromFile("content/Audio/buttonPressed.wav");
 	SOUND_WIN.loadFromFile("content/Audio/win.wav");
 	SOUND_VICTORY.loadFromFile("content/Audio/victory.wav");
+	SOUND_LAVA_TOUCHED.loadFromFile("content/Audio/lavaTouched.wav");
 
 	introMusic.setBuffer(MUSIC_INTRO);
 	battleMusic.setBuffer(MUSIC_BATTLE);
@@ -77,6 +79,8 @@ sf::SoundBuffer* SoundManager::GetBufferPtr(int type)
 			return &SoundManager::SOUND_WIN;
 		case SoundManager::TYPE_VICTORY:
 			return &SoundManager::SOUND_VICTORY;
+		case SoundManager::TYPE_LAVA_TOUCHED:
+			return &SoundManager::SOUND_LAVA_TOUCHED;
 		default:
 			return nullptr;
 	}
@@ -126,7 +130,7 @@ void SoundManager::ToggleBattleMusic()
 void SoundManager::PlaySoundEffect(int type)
 {
 	CheckInitialization();
-	if (0 <= type && type <= 8)
+	if (0 <= type && type <= 9)
 	{
 		sf::Sound sound;
 		sound.setBuffer(*SoundManager::GetBufferPtr(type));

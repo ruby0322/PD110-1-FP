@@ -26,6 +26,7 @@ private:
 	static sf::SoundBuffer SOUND_BUTTON_PRESSED;
 	static sf::SoundBuffer SOUND_WIN;
 	static sf::SoundBuffer SOUND_VICTORY;
+	static sf::SoundBuffer SOUND_LAVA_TOUCHED;
 
 	static std::vector<sf::Sound> sounds;
 	static sf::Sound introMusic;
@@ -49,6 +50,7 @@ public:
 	static const int TYPE_BUTTON_PRESSED = 6;
 	static const int TYPE_WIN = 7;
 	static const int TYPE_VICTORY = 8;
+	static const int TYPE_LAVA_TOUCHED = 9;
 
 	static void Init();
 
