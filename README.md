@@ -1,12 +1,12 @@
-## $$\text{專案簡介}$$
+## 專案簡介
 
-### $$\text{作品名稱}$$
+### 作品名稱
 
-$$\text{《 IM TANKER》}$$
+《 IM TANKER》
 
-### $$\text{遊戲介紹}$$
+### 遊戲介紹
 
-$\text{《 IM TANKER》}$是一款單機雙人對戰的坦克遊戲。
+《 IM TANKER》是一款單機雙人對戰的坦克遊戲。
 
 遊戲採五戰三勝制，每回合提供九張地圖給玩家自由選擇，首先獲得三勝者為最終贏家！
 
@@ -16,18 +16,18 @@ $\text{《 IM TANKER》}$是一款單機雙人對戰的坦克遊戲。
 
 玩家會面後，這時就是考驗操縱的熟練度了！除了高超的槍法外，還需要能巧妙地躲開對方的攻擊。若覺得實力懸殊的話，也可以藉由箱子掉落的各種道具增強能力。趕快找朋友來玩一局吧！
 
-### $$\text{HackMD書面報告}$$
+### HackMD 書面報告
 
 [連結](https://hackmd.io/@ruby0322/HJBBKHgTY)
 
-### $$\text{GitHub Repository}$$
+### GitHub Repository
 
 [IM TANKER GitHub Repo](https://github.com/ruby0322/PD110-1-FP.git)
 
-### $$\text{遊戲影片}$$
+### 遊戲影片
 
 [待補]()
 
-### $$\text{組員像家長展示的紀錄片}$$
+### 組員像家長展示的紀錄片
 
 [待補]()
